@@ -3,7 +3,7 @@
 
 _start:
     la sp, boot_stack_top
-    call kernel_main
+    call kernel_entry
 
     .section .bss.stack
     .align 12
