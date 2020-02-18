@@ -13,15 +13,29 @@
 // Save the status
 .macro SAVE_ALL
     // Atomically swap sp and sscratch
-    // csrrw x0, csr(addr), rs1: swap (csr, rs1), write csr into x0
+    // CSR: Control and Status Registers
+    // csrrw x0, csr, rs1: swap (csr, rs1), write csr into x0
+    // sscratch: kernel stack (U mode), 0 (S mode)
     csrrw sp, sscratch, sp
+
+    // If sp = 0, which means sscratch = 0 (before swapping)
+    //  => trapped in S mode
+    //  => now: sp, sscratch all for kernel stack
+    // Else
+    //  => trapped in U mode
+    //  => now: sp for kernel stack, sscratch for user stack
+    //  => skip the csrr instruction
     bnez sp, trap_from_user
 
 trap_from_kernel:
+    // csrr rd, csr (read csr into rd)
     csrr sp, sscratch
 
 trap_from_user:
+    // Allocate frame stack
     addi sp, sp, -36 * WSIZE
+
+    // Store registers except x0 (always 0), x2 (sp)
     STORE x1, 1
 	STORE x3, 3
 	STORE x4, 4
@@ -53,12 +67,17 @@ trap_from_user:
     STORE x30, 30
     STORE x31, 31
 
+    // sscratch (now): kernel stack (from S mode), user stack (from U mode)
+    // save sscratch into s0, let sccratch = 0
     csrrw s0, sscratch, x0
+
+    // read another 4 registers into s[1-4]
     csrr s1, sstatus
     csrr s2, sepc
     csrr s3, stval
     csrr s4, scause
 
+    // store s[0-4] into stack
     STORE s0, 2
     STORE s1, 32
     STORE s2, 33
@@ -68,19 +87,32 @@ trap_from_user:
 
 // Restore the status
 .macro RESTORE_ALL
+    // s1 = sstatus
     LOAD s1, 32
+
+    // s2 = sepc
     LOAD s2, 33
+
+    // Judge whether entered from S mode (or U mode)
+    //  => sstatus.SPP = 1 (S mode)
     andi s0, s1, 1 << 8
+
+    // Whether SPP != 0
     bnez s0, to_kernel
 
 to_user:
+    // Release the space on stack
     addi s0, sp, 36 * WSIZE
+
+    // let sscratch = s0 (kernel stack)
     csrw sscratch, s0
 
 to_kernel:
+    // Restore sstatus, sepc
     csrw sstatus, s1
     csrw sepc, s2
 
+    // Restore registers except x0 and x2
     LOAD x1, 1
     LOAD x3, 3
     LOAD x4, 4
@@ -112,6 +144,7 @@ to_kernel:
     LOAD x30, 30
     LOAD x31, 31
 
+    // sp = kernel stack or user stack
     LOAD x2, 2
 .endm
 
