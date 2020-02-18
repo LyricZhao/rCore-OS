@@ -10,8 +10,13 @@ pub extern "C" fn kernel_entry() -> ! {
     println!("-> _start addr    = 0x{:x}", _start as usize);
     println!("-> boot_stack_top = 0x{:x}", boot_stack_top as usize);
 
-    // Interrupt
+    // Interrupt initialization
     crate::interrupt::initialize();
+
+    // Timer initialization
+    crate::timer::initialize();
+
+    // Breakpoint test
     unsafe {
         asm!("ebreak"::::"volatile"); // Jump to trap_handler (Exception: breakpoint)
     }

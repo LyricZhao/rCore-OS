@@ -1,5 +1,12 @@
-use riscv::register::{stvec, sscratch, sstatus};
+use riscv::register::{
+    stvec,
+    sscratch,
+    sstatus,
+    scause:: {Trap, Exception, Interrupt}
+};
+
 use crate::context::TrapFrame;
+use crate::timer::{set_next_event, TICKS};
 
 global_asm!(include_str!("trap/trap.asm"));
 
@@ -19,6 +26,25 @@ pub fn initialize() {
 
 #[no_mangle]
 fn trap_handler(frame: &mut TrapFrame) {
-    println!("Got trap.");
-    frame.sepc += 2;
+    match frame.scause.cause() {
+        Trap::Exception(Exception::Breakpoint) => breakpoint_handler(&mut frame.sepc),
+        Trap::Interrupt(Interrupt::SupervisorTimer) => supervisor_timer_handler(),
+        _ => panic!("undefined trap.")
+    }
+}
+
+fn breakpoint_handler(sepc: &mut usize) {
+    println!("breakpoint at 0x{:x}", sepc);
+    *sepc += 2; // continue program
+}
+
+fn supervisor_timer_handler() {
+    set_next_event();
+    unsafe {
+        TICKS += 1;
+        if TICKS == 100 {
+            TICKS = 0;
+            println!("Timer: 100 ticks");
+        }
+    }
 }

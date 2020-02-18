@@ -31,3 +31,10 @@ pub fn console_putchar(ch: usize) {
 pub fn console_getchar() -> usize {
     sbi_call(SBI_CONSOLE_GETCHAR, 0, 0, 0)
 }
+
+pub fn set_timer(time: u64) { // Timer will fire at the time
+    #[cfg(target_pointer_width = "32")]
+    sbi_call(SBI_SET_TIMER, time as usize, (time >> 32) as usize, 0);
+    #[cfg(target_pointer_width = "64")]
+    sbi_call(SBI_SET_TIMER, time as usize, 0, 0);
+}

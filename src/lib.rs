@@ -11,3 +11,4 @@ mod entry;
 mod interrupt;
 mod lang;
 mod sbi;
+mod timer;
