@@ -44,7 +44,6 @@ fn supervisor_timer_handler() {
         TICKS += 1;
         if TICKS == 100 {
             TICKS = 0;
-            println!("Timer: 100 ticks");
         }
     }
 }
