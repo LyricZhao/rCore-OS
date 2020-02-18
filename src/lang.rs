@@ -8,5 +8,5 @@ fn panic(info: &PanicInfo) -> ! { // ! means will not return
 
 #[no_mangle]
 extern "C" fn abort() -> ! {
-    panic!("OS aborts!");
+    panic!("System aborts.");
 }
