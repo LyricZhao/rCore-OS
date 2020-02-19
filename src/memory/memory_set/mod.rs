@@ -44,7 +44,7 @@ impl MemorySet {
         // .text RX
         self.push(
             stext as usize,
-            erodata as usize,
+            etext as usize,
             MemoryAttr::new().set_read_only().set_executable(),
             Linear::new(offset),
         );

@@ -113,7 +113,6 @@ impl PageTable {
         let table = unsafe { &mut *(paddr_to_vaddr(paddr) as *mut PageTableEntryArray) };
         table.zero();
 
-        // TODO: figure out how the table works
         PageTable {
             page_table: Rv39PageTable::new(table, PHYSICAL_MEMORY_OFFSET),
             root: frame,
