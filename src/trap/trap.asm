@@ -148,15 +148,15 @@ to_kernel:
     LOAD x2, 2
 .endm
 
-.section .text
-.globl __traps_entry
+    .section .text
+    .globl __traps_entry
 
 __trap_entry:
     SAVE_ALL
     mv a0, sp
     jal trap_handler
 
-.globl __trap_ret
+    .globl __trap_ret
 
 __trap_ret:
     RESTORE_ALL
