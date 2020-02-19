@@ -31,6 +31,8 @@ pub fn initialize(begin: usize, end: usize) {
             .lock()
             .init(HEAP.as_ptr() as usize, KERNEL_HEAP_SIZE);
     }
+
+    // Remapping of different areas in kernel code and generate a new page table
     kernel_remap();
     println!("Memory initialized.");
 }

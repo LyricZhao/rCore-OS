@@ -8,6 +8,7 @@ pub struct VirtualPageRange {
     end: usize,
 }
 
+// Iterate the start address of virtual page
 impl Iterator for VirtualPageRange {
     type Item = usize;
 

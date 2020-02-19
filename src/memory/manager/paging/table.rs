@@ -25,7 +25,7 @@ impl PageTable {
         let paddr = frame.start_address().as_usize();
 
         // Use the frame space to initialize Rv39PageTable (compiler accesses via vaddr)
-        // Note that the size of the space is fixed (2^9 entry for riscv64)
+        // Note that the size of the space is fixed (2^9 entry for riscv64 because page size is 2^12 (8 bytes for each entry))
         let table = unsafe { &mut *(paddr_to_vaddr(paddr) as *mut PageTableEntryArray) };
         table.zero();
 

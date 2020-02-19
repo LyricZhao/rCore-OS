@@ -3,8 +3,8 @@ use crate::memory::manager::attr::MemoryAttr;
 use crate::memory::manager::paging::table::PageTable;
 use alloc::boxed::Box;
 
-// TODO: why there is a Debug and 'static
-// Memory handler is more likely a wrapper (for areas) of page tables (for page).
+// Memory handler is more likely a wrapper (for virtual pages in memory area, setting up the mapping by different ways).
+// The handler must ensure no overlapping
 pub trait Handler: 'static {
     // Grammar 'dyn' is used to solve the ambiguity, MemoryHandler is a structure or trait (yes) ?
     fn box_clone(&self) -> Box<dyn Handler>;
@@ -23,6 +23,7 @@ impl Clone for Box<dyn Handler> {
     }
 }
 
+// Use offset (linear mapping)
 #[derive(Clone)]
 pub struct Linear {
     offset: usize,
@@ -44,6 +45,7 @@ impl Handler for Linear {
     }
 }
 
+// Allocate new frame for area mapping
 #[derive(Clone)]
 pub struct ByFrame;
 

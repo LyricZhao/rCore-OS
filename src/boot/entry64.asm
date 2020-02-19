@@ -30,6 +30,7 @@ _start:
     // Now set sp as vaddr
     lui sp, %hi(boot_stack_top)
 
+    // Below the access will be vaddr mode
     // Jump into kernel entry
     lui t0, %hi(kernel_entry)
     addi t0, t0, %lo(kernel_entry)
@@ -46,8 +47,10 @@ boot_stack_top:
 
     // The page table must be in one physical page (12 aligned)
     // Mapping 0xffffffff_c0000000 to 0x80000000 (1G)
-    // 1G has 512 physical page, 511 zeros
+    // 1G has 512 physical page, 511 zeros (it's a must for riscv64, level mapping)
     // The last is (PPN: 0x80000, flags: VRWXAD (0xcf))
+    // Why last? Kernel starts from 0xffffffffc0200 (.. + [9 bits + 9 bits + 9 bits] (3-level mapping) + 12 bits)
+    // So we can use a single page for all 3 level mapping (consider the bits of the kernel vaddr/paddr)
     .section .data
     .align 12
 boot_page_table_sv39:
