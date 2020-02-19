@@ -36,6 +36,11 @@ fn breakpoint_handler(sepc: &mut usize) {
     *sepc += 2; // continue program
 }
 
+fn page_fault(frame: &mut TrapFrame) {
+    println!("{:?} vaddr = {:#x} instruction = {:#x}", frame.scause.cause(), frame.stval, frame.sepc);
+    panic!("Page fault");
+}
+
 fn supervisor_timer_handler() {
     set_next_event();
     unsafe {

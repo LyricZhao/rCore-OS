@@ -2,11 +2,16 @@
 
 use crate::consts::*;
 use crate::memory::frame_allocator::LinearFrameAllocator;
+use crate::memory::memory_set::attr::MemoryAttr;
+use crate::memory::memory_set::handler::Linear;
+use crate::memory::memory_set::MemorySet;
 use buddy_system_allocator::LockedHeap;
 use riscv::addr::Frame;
 use spin::Mutex;
 
 mod frame_allocator;
+pub mod memory_set;
+pub mod paging;
 
 // Frame allocator
 static FRAME_ALLOCATOR: Mutex<LinearFrameAllocator> = Mutex::new(LinearFrameAllocator {
@@ -27,7 +32,25 @@ pub fn initialize(begin: usize, end: usize) {
             .lock()
             .init(HEAP.as_ptr() as usize, KERNEL_HEAP_SIZE);
     }
+    kernel_remap();
     println!("Memory initialized.");
+}
+
+pub fn kernel_remap() {
+    let mut memory_set = MemorySet::new();
+    extern "C" {
+        fn boot_stack();
+        fn boot_stack_top();
+    }
+    memory_set.push(
+        boot_stack as usize,
+        boot_stack_top as usize,
+        MemoryAttr::new(),
+        Linear::new(PHYSICAL_MEMORY_OFFSET),
+    );
+    unsafe {
+        memory_set.activate();
+    }
 }
 
 #[alloc_error_handler]
@@ -41,4 +64,8 @@ pub fn frame_alloc() -> Option<Frame> {
 
 pub fn frame_dealloc(frame: Frame) {
     FRAME_ALLOCATOR.lock().dealloc(frame.number());
+}
+
+pub fn paddr_to_vaddr(paddr: usize) -> usize {
+    paddr + PHYSICAL_MEMORY_OFFSET
 }
