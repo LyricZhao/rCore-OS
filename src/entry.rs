@@ -1,5 +1,4 @@
 use crate::consts::*;
-use crate::memory::{alloc, dealloc};
 
 global_asm!(include_str!("boot/entry64.asm"));
 
@@ -28,16 +27,6 @@ pub extern "C" fn kernel_entry() -> ! {
 
     // Memory initialization
     crate::memory::initialize((kernel_end_paddr >> 12) + 1, PHYSICAL_MEMORY_END >> 12);
-
-    // Allocate test
-    println!("-> Alloc {:x?}", alloc());
-    let frame = alloc();
-    println!("-> Alloc {:x?}", frame);
-    println!("-> Alloc {:x?}", alloc());
-    println!("-> Dealloc {:x?}", frame);
-    dealloc(frame.unwrap());
-    println!("-> Alloc {:x?}", alloc());
-    println!("-> Alloc {:x?}", alloc());
 
     loop {}
 }
