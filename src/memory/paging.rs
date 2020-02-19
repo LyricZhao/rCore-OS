@@ -99,7 +99,7 @@ pub struct PageTable {
     page_table: Rv39PageTable<'static>,
     // Root frame of the 3-level structure
     root: Frame,
-    entry: Option<PageEntry>
+    entry: Option<PageEntry>,
 }
 
 impl PageTable {
@@ -191,6 +191,7 @@ impl PageTable {
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(C)]
 pub struct PageRange {
+    // The address range is virtual
     start: usize,
     end: usize,
 }

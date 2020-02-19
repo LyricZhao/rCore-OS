@@ -2,14 +2,28 @@ use crate::memory::frame_alloc;
 use crate::memory::memory_set::attr::MemoryAttr;
 use crate::memory::paging::PageTable;
 use alloc::boxed::Box;
-use core::fmt::Debug;
 
-pub trait MemoryHandler: Debug + 'static {
+// TODO: why there is a Debug and 'static
+// Memory handler is more likely a wrapper (for areas) of page tables (for page).
+pub trait MemoryHandler: 'static {
+    // Grammar 'dyn' is used to solve the ambiguity, MemoryHandler is a structure or trait (yes) ?
     fn box_clone(&self) -> Box<dyn MemoryHandler>;
+
+    fn unmap(&self, page_table: &mut PageTable, vaddr: usize) {
+        page_table.unmap(vaddr);
+    }
+
+    // The only difference between handlers
     fn map(&self, page_table: &mut PageTable, vaddr: usize, attr: &MemoryAttr);
-    fn unmap(&self, page_table: &mut PageTable, vaddr: usize);
 }
 
+impl Clone for Box<dyn MemoryHandler> {
+    fn clone(&self) -> Box<dyn MemoryHandler> {
+        self.box_clone()
+    }
+}
+
+#[derive(Clone)]
 pub struct Linear {
     offset: usize,
 }
@@ -28,12 +42,9 @@ impl MemoryHandler for Linear {
     fn map(&self, page_table: &mut PageTable, vaddr: usize, attr: &MemoryAttr) {
         attr.apply(page_table.map(vaddr, vaddr - self.offset));
     }
-
-    fn unmap(&self, page_table: &mut PageTable, vaddr: usize) {
-        page_table.unmap(vaddr);
-    }
 }
 
+#[derive(Clone)]
 pub struct ByFrame;
 
 impl ByFrame {
@@ -51,9 +62,5 @@ impl MemoryHandler for ByFrame {
         let frame = frame_alloc().unwrap();
         let paddr = frame.start_address().as_usize();
         attr.apply(page_table.map(vaddr, paddr));
-    }
-
-    fn unmap(&self, page_table: &mut PageTable, vaddr: usize) {
-        page_table.unmap(vaddr);
     }
 }

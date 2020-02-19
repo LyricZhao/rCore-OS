@@ -3,10 +3,9 @@ use crate::memory::memory_set::area::MemoryArea;
 use crate::memory::memory_set::attr::MemoryAttr;
 use crate::memory::memory_set::handler::{Linear, MemoryHandler};
 use crate::memory::paging::PageTable;
-use crate::memory::{paddr_to_vaddr, FRAME_ALLOCATOR};
+use crate::memory::{paddr_to_vaddr};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
-use riscv::addr::Page;
 
 pub mod area;
 pub mod attr;
@@ -27,6 +26,7 @@ impl MemorySet {
         memory_set
     }
 
+    // Map kernel and physical memory
     pub fn initialize(&mut self) {
         extern "C" {
             fn stext();
@@ -41,30 +41,35 @@ impl MemorySet {
         }
 
         let offset = PHYSICAL_MEMORY_OFFSET;
+        // .text RX
         self.push(
             stext as usize,
             erodata as usize,
             MemoryAttr::new().set_read_only().set_executable(),
             Linear::new(offset),
         );
+        // .rodata R
         self.push(
             srodata as usize,
             erodata as usize,
             MemoryAttr::new().set_read_only(),
             Linear::new(offset),
         );
+        // .data RW
         self.push(
             sdata as usize,
             edata as usize,
             MemoryAttr::new().set_read_only(),
             Linear::new(offset),
         );
+        // .bss RW
         self.push(
             sbss as usize,
             ebss as usize,
             MemoryAttr::new(),
             Linear::new(offset),
         );
+        // Physical memory RW
         self.push(
             (end as usize / PAGE_SIZE + 1) * PAGE_SIZE,
             paddr_to_vaddr(PHYSICAL_MEMORY_END),
@@ -73,6 +78,7 @@ impl MemorySet {
         );
     }
 
+    // Push a new area
     pub fn push(
         &mut self,
         start: usize,
@@ -92,6 +98,7 @@ impl MemorySet {
             .is_none()
     }
 
+    // Switch to current page table
     pub unsafe fn activate(&self) {
         self.page_table.activate();
     }

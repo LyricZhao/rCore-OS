@@ -27,6 +27,9 @@ fn trap_handler(frame: &mut TrapFrame) {
     match frame.scause.cause() {
         Trap::Exception(Exception::Breakpoint) => breakpoint_handler(&mut frame.sepc),
         Trap::Interrupt(Interrupt::SupervisorTimer) => supervisor_timer_handler(),
+        Trap::Exception(Exception::InstructionPageFault) => page_fault(frame),
+        Trap::Exception(Exception::LoadPageFault) => page_fault(frame),
+        Trap::Exception(Exception::StorePageFault) => page_fault(frame),
         _ => panic!("undefined trap."),
     }
 }

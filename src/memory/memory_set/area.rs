@@ -12,6 +12,7 @@ pub struct MemoryArea {
 }
 
 impl MemoryArea {
+    // Note (start, end) are the virtual address range
     pub fn new(
         start: usize,
         end: usize,
@@ -28,10 +29,17 @@ impl MemoryArea {
 
     pub fn map(&self, page_table: &mut PageTable) {
         for page in PageRange::new(self.start, self.end) {
+            self.handler.map(page_table, page, &self.attr);
+        }
+    }
+
+    pub fn unmap(&self, page_table: &mut PageTable) {
+        for page in PageRange::new(self.start, self.end) {
             self.handler.unmap(page_table, page);
         }
     }
 
+    // The area is page size times, check whether overlapped with others
     pub fn is_overlap_with(&self, start: usize, end: usize) -> bool {
         let p1 = self.start / PAGE_SIZE;
         let p2 = (self.end - 1) / PAGE_SIZE + 1;

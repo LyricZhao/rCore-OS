@@ -1,10 +1,10 @@
 use crate::memory::paging::PageEntry;
-use riscv::interrupt::enable;
 
+// Attribution for a memory area
 pub struct MemoryAttr {
     user: bool,
     read_only: bool,
-    executable: bool,
+    executable: bool
 }
 
 impl MemoryAttr {
@@ -12,7 +12,7 @@ impl MemoryAttr {
         MemoryAttr {
             user: false,
             read_only: false,
-            executable: false,
+            executable: false
         }
     }
 
@@ -32,7 +32,9 @@ impl MemoryAttr {
     }
 
     pub fn apply(&self, entry: &mut PageEntry) {
+        // Present means readable and valid
         entry.set_present(true);
+
         entry.set_user(self.user);
         entry.set_writable(!self.read_only);
         entry.set_executable(self.executable);
