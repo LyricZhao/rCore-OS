@@ -11,8 +11,14 @@ pub extern "C" fn kernel_entry() -> ! {
     println!("Rust OS minimal kernel");
 
     let kernel_end_paddr = end as usize - KERNEL_BEGIN_VADDR + KERNEL_BEGIN_PADDR;
-    println!("-> kernel space: [{:#x}, {:#x})", KERNEL_BEGIN_PADDR, kernel_end_paddr);
-    println!("-> free space: [{:#x}, {:#x})", kernel_end_paddr, PHYSICAL_MEMORY_END);
+    println!(
+        "-> kernel space: [{:#x}, {:#x})",
+        KERNEL_BEGIN_PADDR, kernel_end_paddr
+    );
+    println!(
+        "-> free space: [{:#x}, {:#x})",
+        kernel_end_paddr, PHYSICAL_MEMORY_END
+    );
 
     // Interrupt initialization
     crate::interrupt::initialize();

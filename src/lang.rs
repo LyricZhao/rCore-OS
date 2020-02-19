@@ -1,7 +1,8 @@
 use core::panic::PanicInfo;
 
 #[panic_handler]
-fn panic(info: &PanicInfo) -> ! { // ! means will not return
+fn panic(info: &PanicInfo) -> ! {
+    // ! means will not return
     println!("{}", info);
     loop {}
 }

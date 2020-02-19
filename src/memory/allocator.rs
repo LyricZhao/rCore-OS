@@ -4,11 +4,13 @@ use spin::Mutex;
 pub struct LinearAllocator {
     flags: [bool; MAX_PHYSICAL_PAGES],
     offset: usize,
-    size: usize
+    size: usize,
 }
 
 pub static ALLOCATOR: Mutex<LinearAllocator> = Mutex::new(LinearAllocator {
-    flags: [false; MAX_PHYSICAL_PAGES], offset: 0, size: 0
+    flags: [false; MAX_PHYSICAL_PAGES],
+    offset: 0,
+    size: 0,
 });
 
 impl LinearAllocator {

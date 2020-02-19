@@ -1,8 +1,6 @@
 use riscv::register::{
-    stvec,
-    sscratch,
-    sstatus,
-    scause:: {Trap, Exception, Interrupt}
+    scause::{Exception, Interrupt, Trap},
+    sscratch, sstatus, stvec,
 };
 
 use crate::context::TrapFrame;
@@ -29,7 +27,7 @@ fn trap_handler(frame: &mut TrapFrame) {
     match frame.scause.cause() {
         Trap::Exception(Exception::Breakpoint) => breakpoint_handler(&mut frame.sepc),
         Trap::Interrupt(Interrupt::SupervisorTimer) => supervisor_timer_handler(),
-        _ => panic!("undefined trap.")
+        _ => panic!("undefined trap."),
     }
 }
 
