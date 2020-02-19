@@ -2,16 +2,15 @@
 
 use crate::consts::*;
 use crate::memory::frame_allocator::LinearFrameAllocator;
-use crate::memory::memory_set::attr::MemoryAttr;
-use crate::memory::memory_set::handler::Linear;
-use crate::memory::memory_set::MemorySet;
+use crate::memory::manager::attr::MemoryAttr;
+use crate::memory::manager::handler::Linear;
+use crate::memory::manager::Manager;
 use buddy_system_allocator::LockedHeap;
 use riscv::addr::Frame;
 use spin::Mutex;
 
 mod frame_allocator;
-pub mod memory_set;
-pub mod paging;
+pub mod manager;
 
 // Frame allocator
 static FRAME_ALLOCATOR: Mutex<LinearFrameAllocator> = Mutex::new(LinearFrameAllocator {
@@ -37,19 +36,19 @@ pub fn initialize(begin: usize, end: usize) {
 }
 
 pub fn kernel_remap() {
-    let mut memory_set = MemorySet::new();
+    let mut manager = Manager::new();
     extern "C" {
         fn boot_stack();
         fn boot_stack_top();
     }
-    memory_set.push(
+    manager.push(
         boot_stack as usize,
         boot_stack_top as usize,
         MemoryAttr::new(),
         Linear::new(PHYSICAL_MEMORY_OFFSET),
     );
     unsafe {
-        memory_set.activate();
+        manager.activate();
     }
 }
 

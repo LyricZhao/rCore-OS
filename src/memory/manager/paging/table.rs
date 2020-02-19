@@ -1,97 +1,13 @@
 use crate::consts::*;
-use crate::memory::{frame_alloc, frame_dealloc, paddr_to_vaddr};
+use crate::memory::manager::paging::entry::PageEntry;
+use crate::memory::manager::paging::FrameAllocatorForPaging;
+use crate::memory::{frame_alloc, paddr_to_vaddr};
 use riscv::addr::{Frame, Page, PhysAddr, VirtAddr};
-use riscv::asm::{sfence_vma, sfence_vma_all};
+use riscv::asm::sfence_vma_all;
 use riscv::paging::{
-    FrameAllocator, FrameDeallocator, Mapper, PageTable as PageTableEntryArray, PageTableEntry,
-    PageTableFlags as EF, Rv39PageTable,
+    Mapper, PageTable as PageTableEntryArray, PageTableEntry, PageTableFlags as EF, Rv39PageTable,
 };
 use riscv::register::satp;
-
-struct FrameAllocatorForPaging;
-
-impl FrameAllocator for FrameAllocatorForPaging {
-    fn alloc(&mut self) -> Option<Frame> {
-        frame_alloc()
-    }
-}
-
-impl FrameDeallocator for FrameAllocatorForPaging {
-    fn dealloc(&mut self, frame: Frame) {
-        frame_dealloc(frame)
-    }
-}
-
-// PageEntry (页项) is different with PageTableEntry (页表项)
-pub struct PageEntry {
-    entry: &'static mut PageTableEntry,
-    page: Page, // Virtual Page
-}
-
-impl PageEntry {
-    // TLB refresh
-    pub fn update(&mut self) {
-        unsafe { sfence_vma(0, self.page.start_address().as_usize()) }
-    }
-
-    pub fn accessed(&self) -> bool {
-        self.entry.flags().contains(EF::ACCESSED)
-    }
-
-    pub fn clear_accessed(&mut self) {
-        self.entry.flags_mut().remove(EF::ACCESSED);
-    }
-
-    pub fn dirty(&self) -> bool {
-        self.entry.flags().contains(EF::DIRTY)
-    }
-
-    pub fn clear_dirty(&mut self) {
-        self.entry.flags_mut().remove(EF::DIRTY);
-    }
-
-    pub fn writable(&self) -> bool {
-        self.entry.flags().contains(EF::WRITABLE)
-    }
-
-    pub fn set_writable(&mut self, value: bool) {
-        self.entry.flags_mut().set(EF::WRITABLE, value);
-    }
-
-    pub fn present(&self) -> bool {
-        self.entry.flags().contains(EF::VALID | EF::READABLE)
-    }
-
-    pub fn set_present(&mut self, value: bool) {
-        self.entry.flags_mut().set(EF::VALID | EF::READABLE, value);
-    }
-
-    pub fn user(&self) -> bool {
-        self.entry.flags().contains(EF::USER)
-    }
-
-    pub fn set_user(&mut self, value: bool) {
-        self.entry.flags_mut().set(EF::USER, value);
-    }
-
-    pub fn executable(&self) -> bool {
-        self.entry.flags().contains(EF::EXECUTABLE)
-    }
-
-    pub fn set_executable(&mut self, value: bool) {
-        self.entry.flags_mut().set(EF::EXECUTABLE, value);
-    }
-
-    pub fn target(&self) -> usize {
-        self.entry.addr().as_usize()
-    }
-
-    pub fn set_target(&mut self, target: usize) {
-        let flags = self.entry.flags();
-        let frame = Frame::of_addr(PhysAddr::new(target));
-        self.entry.set(frame, flags);
-    }
-}
 
 // Note the table could only map virtual page to physical ones, but not manage the segments of memory (like bss or ...)
 pub struct PageTable {
@@ -183,37 +99,6 @@ impl PageTable {
         if new_token != old_token {
             Self::set_token(new_token);
             Self::flush_tlb();
-        }
-    }
-}
-
-#[derive(Clone, Copy, PartialEq, Eq)]
-#[repr(C)]
-pub struct PageRange {
-    // The address range is virtual
-    start: usize,
-    end: usize,
-}
-
-impl Iterator for PageRange {
-    type Item = usize;
-
-    fn next(&mut self) -> Option<usize> {
-        if self.start < self.end {
-            let page = self.start << 12;
-            self.start += 1;
-            Some(page)
-        } else {
-            None
-        }
-    }
-}
-
-impl PageRange {
-    pub fn new(start: usize, end: usize) -> Self {
-        PageRange {
-            start: start / PAGE_SIZE,
-            end: (end - 1) / PAGE_SIZE,
         }
     }
 }

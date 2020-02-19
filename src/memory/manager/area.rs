@@ -1,25 +1,21 @@
 use crate::consts::PAGE_SIZE;
-use crate::memory::memory_set::attr::MemoryAttr;
-use crate::memory::memory_set::handler::MemoryHandler;
-use crate::memory::paging::{PageRange, PageTable};
+use crate::memory::manager::attr::MemoryAttr;
+use crate::memory::manager::handler::Handler;
+use crate::memory::manager::paging::range::VirtualPageRange;
+use crate::memory::manager::paging::table::PageTable;
 use alloc::boxed::Box;
 
-pub struct MemoryArea {
+pub struct Area {
     start: usize,
     end: usize,
-    handler: Box<dyn MemoryHandler>,
+    handler: Box<dyn Handler>,
     attr: MemoryAttr,
 }
 
-impl MemoryArea {
+impl Area {
     // Note (start, end) are the virtual address range
-    pub fn new(
-        start: usize,
-        end: usize,
-        handler: Box<dyn MemoryHandler>,
-        attr: MemoryAttr,
-    ) -> Self {
-        MemoryArea {
+    pub fn new(start: usize, end: usize, handler: Box<dyn Handler>, attr: MemoryAttr) -> Self {
+        Area {
             start,
             end,
             handler,
@@ -28,13 +24,13 @@ impl MemoryArea {
     }
 
     pub fn map(&self, page_table: &mut PageTable) {
-        for page in PageRange::new(self.start, self.end) {
+        for page in VirtualPageRange::new(self.start, self.end) {
             self.handler.map(page_table, page, &self.attr);
         }
     }
 
     pub fn unmap(&self, page_table: &mut PageTable) {
-        for page in PageRange::new(self.start, self.end) {
+        for page in VirtualPageRange::new(self.start, self.end) {
             self.handler.unmap(page_table, page);
         }
     }

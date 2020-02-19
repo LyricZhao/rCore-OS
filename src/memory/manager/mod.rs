@@ -1,24 +1,25 @@
 use crate::consts::{PAGE_SIZE, PHYSICAL_MEMORY_END, PHYSICAL_MEMORY_OFFSET};
-use crate::memory::memory_set::area::MemoryArea;
-use crate::memory::memory_set::attr::MemoryAttr;
-use crate::memory::memory_set::handler::{Linear, MemoryHandler};
-use crate::memory::paging::PageTable;
-use crate::memory::{paddr_to_vaddr};
+use crate::memory::manager::area::Area;
+use crate::memory::manager::attr::MemoryAttr;
+use crate::memory::manager::handler::{Handler, Linear};
+use crate::memory::manager::paging::table::PageTable;
+use crate::memory::paddr_to_vaddr;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
 pub mod area;
 pub mod attr;
 pub mod handler;
+pub mod paging;
 
-pub struct MemorySet {
-    areas: Vec<MemoryArea>,
+pub struct Manager {
+    areas: Vec<Area>,
     page_table: PageTable,
 }
 
-impl MemorySet {
+impl Manager {
     pub fn new() -> Self {
-        let mut memory_set = MemorySet {
+        let mut memory_set = Manager {
             areas: Vec::new(),
             page_table: PageTable::new(),
         };
@@ -79,14 +80,8 @@ impl MemorySet {
     }
 
     // Push a new area
-    pub fn push(
-        &mut self,
-        start: usize,
-        end: usize,
-        attr: MemoryAttr,
-        handler: impl MemoryHandler,
-    ) {
-        let area = MemoryArea::new(start, end, Box::new(handler), attr);
+    pub fn push(&mut self, start: usize, end: usize, attr: MemoryAttr, handler: impl Handler) {
+        let area = Area::new(start, end, Box::new(handler), attr);
         area.map(&mut self.page_table);
         self.areas.push(area);
     }

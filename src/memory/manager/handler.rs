@@ -1,13 +1,13 @@
 use crate::memory::frame_alloc;
-use crate::memory::memory_set::attr::MemoryAttr;
-use crate::memory::paging::PageTable;
+use crate::memory::manager::attr::MemoryAttr;
+use crate::memory::manager::paging::table::PageTable;
 use alloc::boxed::Box;
 
 // TODO: why there is a Debug and 'static
 // Memory handler is more likely a wrapper (for areas) of page tables (for page).
-pub trait MemoryHandler: 'static {
+pub trait Handler: 'static {
     // Grammar 'dyn' is used to solve the ambiguity, MemoryHandler is a structure or trait (yes) ?
-    fn box_clone(&self) -> Box<dyn MemoryHandler>;
+    fn box_clone(&self) -> Box<dyn Handler>;
 
     fn unmap(&self, page_table: &mut PageTable, vaddr: usize) {
         page_table.unmap(vaddr);
@@ -17,8 +17,8 @@ pub trait MemoryHandler: 'static {
     fn map(&self, page_table: &mut PageTable, vaddr: usize, attr: &MemoryAttr);
 }
 
-impl Clone for Box<dyn MemoryHandler> {
-    fn clone(&self) -> Box<dyn MemoryHandler> {
+impl Clone for Box<dyn Handler> {
+    fn clone(&self) -> Box<dyn Handler> {
         self.box_clone()
     }
 }
@@ -34,8 +34,8 @@ impl Linear {
     }
 }
 
-impl MemoryHandler for Linear {
-    fn box_clone(&self) -> Box<dyn MemoryHandler> {
+impl Handler for Linear {
+    fn box_clone(&self) -> Box<dyn Handler> {
         Box::new(self.clone())
     }
 
@@ -53,8 +53,8 @@ impl ByFrame {
     }
 }
 
-impl MemoryHandler for ByFrame {
-    fn box_clone(&self) -> Box<dyn MemoryHandler> {
+impl Handler for ByFrame {
+    fn box_clone(&self) -> Box<dyn Handler> {
         Box::new(self.clone())
     }
 

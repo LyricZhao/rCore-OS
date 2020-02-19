@@ -1,10 +1,10 @@
-use crate::memory::paging::PageEntry;
+use crate::memory::manager::paging::entry::PageEntry;
 
 // Attribution for a memory area
 pub struct MemoryAttr {
     user: bool,
     read_only: bool,
-    executable: bool
+    executable: bool,
 }
 
 impl MemoryAttr {
@@ -12,7 +12,7 @@ impl MemoryAttr {
         MemoryAttr {
             user: false,
             read_only: false,
-            executable: false
+            executable: false,
         }
     }
 

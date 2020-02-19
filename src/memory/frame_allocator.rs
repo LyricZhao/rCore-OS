@@ -1,5 +1,6 @@
 use crate::consts::MAX_PHYSICAL_PAGES;
 
+// Physical frame allocator
 pub struct LinearFrameAllocator {
     pub flags: [bool; MAX_PHYSICAL_PAGES],
     pub offset: usize,
