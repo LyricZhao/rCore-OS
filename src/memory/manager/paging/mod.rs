@@ -6,6 +6,7 @@ pub mod entry;
 pub mod range;
 pub mod table;
 
+// We use riscv::paging by adding these 2 traits.
 struct FrameAllocatorForPaging;
 
 impl FrameAllocator for FrameAllocatorForPaging {

@@ -11,9 +11,11 @@ pub struct PageEntry {
 impl PageEntry {
     // TLB refresh
     pub fn update(&mut self) {
+        // asid is the process id (0 for kernel, I guess)
         unsafe { sfence_vma(0, self.page.start_address().as_usize()) }
     }
 
+    // TODO: to deeply understand the meaning of the flags
     pub fn accessed(&self) -> bool {
         self.entry.flags().contains(EF::ACCESSED)
     }
@@ -62,6 +64,7 @@ impl PageEntry {
         self.entry.flags_mut().set(EF::EXECUTABLE, value);
     }
 
+    // Physical frame target (return as address)
     pub fn target(&self) -> usize {
         self.entry.addr().as_usize()
     }

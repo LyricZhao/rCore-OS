@@ -13,7 +13,7 @@ impl Iterator for VirtualPageRange {
 
     fn next(&mut self) -> Option<usize> {
         if self.start < self.end {
-            let page = self.start << 12;
+            let page = self.start * PAGE_SIZE;
             self.start += 1;
             Some(page)
         } else {
@@ -26,7 +26,7 @@ impl VirtualPageRange {
     pub fn new(start: usize, end: usize) -> Self {
         VirtualPageRange {
             start: start / PAGE_SIZE,
-            end: (end - 1) / PAGE_SIZE,
+            end: (end - 1) / PAGE_SIZE + 1,
         }
     }
 }
