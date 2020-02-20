@@ -42,7 +42,7 @@
     LOAD s11, 1
     csrw satp, s11  // Page table address switch
     sfence.vma      // TLB Refresh
-    LOAD ra, 0
+    LOAD ra, 0      // ra = __trap_ret (just for ch6), ret instruction will let pc jump there
     LOAD s0, 2
     LOAD s1, 3
     LOAD s2, 4
@@ -55,8 +55,10 @@
     LOAD s9, 11
     LOAD s10, 12
     LOAD s11, 13
+    // * Important *: Skip Content.{ra, satp, s[usize; 12]}
     addi sp, sp, 14 * WSIZE
+    // Now the stack top will be a trap frame
 
-    // Start running with _target.content_addr = 0, TODO: why?
+    // Start running with _target.content_addr = 0, TODO: why? (just a flag?)
     sd zero, 0(a1)
     ret

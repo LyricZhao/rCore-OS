@@ -11,10 +11,10 @@ pub extern "C" fn temp_thread(from: &mut Thread, current: &mut Thread) {
 }
 
 pub fn initialize() {
-    let mut boot_thread = Thread::get_boot_thread();
+    let mut boot_thread = Thread::boot();
     let mut temp_thread = Thread::new_kernel(temp_thread as usize);
 
-    temp_thread.append_initial_arguments([
+    temp_thread.append_args([
         &*boot_thread as *const Thread as usize,
         &*temp_thread as *const Thread as usize,
         0,

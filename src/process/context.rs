@@ -13,12 +13,12 @@ pub struct Content {
 }
 
 impl Content {
-    fn new_kernel_thread(entry: usize, kernel_stack_top: usize, satp: usize) -> Content {
+    fn new_kernel(entry: usize, kernel_stack_top: usize, satp: usize) -> Content {
         extern "C" {
             fn __trap_ret();
         };
         Content {
-            ra: __trap_ret as usize, // return and restore the status (from interrupt handling to kernel thread)
+            ra: __trap_ret as usize, // Why __trap_ret? __trap_ret restores the register values (we can set them to zero as an initialization)
             satp,
             s: [0; 12],
             frame: {
@@ -27,16 +27,15 @@ impl Content {
                 frame.sepc = entry;
                 frame.sstatus = sstatus::read();
                 frame.sstatus.set_spp(sstatus::SPP::Supervisor); // return with S mode
-                                                                 // return with async interrupt enabled
-                frame.sstatus.set_spie(true);
-                frame.sstatus.set_sie(false);
+                frame.sstatus.set_spie(true);   // Same as below
+                frame.sstatus.set_sie(false);   // return with async interrupt enabled
                 frame
             },
         }
     }
 
     unsafe fn push_at(self, stack_top: usize) -> Context {
-        let ptr = (stack_top as *mut Content).sub(1);
+        let ptr = (stack_top as *mut Content).sub(1); // sub means minus sizeof(Content)
         *ptr = self;
         Context {
             content_addr: ptr as usize,
@@ -64,11 +63,13 @@ impl Context {
 }
 
 impl Context {
-    pub unsafe fn new_kernel_thread(entry: usize, kernel_stack_top: usize, satp: usize) -> Context {
-        Content::new_kernel_thread(entry, kernel_stack_top, satp).push_at(kernel_stack_top)
+    // New kernel thread (S mode)
+    pub unsafe fn new_kernel(entry: usize, kernel_stack_top: usize, satp: usize) -> Context {
+        Content::new_kernel(entry, kernel_stack_top, satp).push_at(kernel_stack_top)
     }
 
-    pub unsafe fn append_initial_args(&self, args: [usize; 3]) {
+    // We can use the trap frame (as an initialization) to pass arguments
+    pub unsafe fn append_args(&self, args: [usize; 3]) {
         let content = &mut *(self.content_addr as *mut Content);
         content.frame.x[10] = args[0];
         content.frame.x[11] = args[1];

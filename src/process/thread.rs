@@ -16,26 +16,27 @@ impl Thread {
         }
     }
 
+    // New kernel thread (S mode)
     pub fn new_kernel(entry: usize) -> Box<Thread> {
         unsafe {
             let stack = KernelStack::new();
             Box::new(Thread {
-                context: Context::new_kernel_thread(entry, stack.top(), satp::read().bits()),
+                context: Context::new_kernel(entry, stack.top(), satp::read().bits()),
                 stack,
             })
         }
     }
 
-    pub fn get_boot_thread() -> Box<Thread> {
+    pub fn boot() -> Box<Thread> {
         Box::new(Thread {
             context: Context::null(),
             stack: KernelStack::new_empty(),
         })
     }
 
-    pub fn append_initial_arguments(&self, args: [usize; 3]) {
+    pub fn append_args(&self, args: [usize; 3]) {
         unsafe {
-            self.context.append_initial_args(args);
+            self.context.append_args(args);
         }
     }
 }

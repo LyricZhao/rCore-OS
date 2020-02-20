@@ -12,6 +12,7 @@ impl KernelStack {
         KernelStack(bottom)
     }
 
+    // Why empty? Just for boot thread, we already have stack
     pub fn new_empty() -> KernelStack {
         KernelStack(0)
     }
