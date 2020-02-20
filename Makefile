@@ -42,3 +42,7 @@ gdb: build
 	riscv64-unknown-elf-gdb $(kernel)
 
 run: build qemu
+
+push:
+	git push hub master
+	git push lab master
