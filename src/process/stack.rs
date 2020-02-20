@@ -1,6 +1,7 @@
 use crate::alloc::alloc::{alloc, dealloc, Layout};
 use crate::consts::KERNEL_STACK_SIZE;
 
+// The usize var will be bottom
 pub struct KernelStack(usize);
 
 impl KernelStack {

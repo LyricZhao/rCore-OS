@@ -9,6 +9,7 @@ pub struct Thread {
 }
 
 impl Thread {
+    // The function is implemented by switching the context
     pub fn switch_to(&mut self, target: &mut Thread) {
         unsafe {
             self.context.switch(&mut target.context);

@@ -1,4 +1,5 @@
-// TODO: figure out wtf this file is talking about
+// Note this file is a function
+// pub unsafe extern "C" fn switch(&mut self, _target: &mut Context)
 
 .equ WSIZE, 8 // Word size
 
@@ -14,9 +15,11 @@
 
     // Allocate space for saving context
     addi sp, sp, -14 * WSIZE
-    // Switch to a new stack top
+    // Now sp = &mut self (Context.content_addr), we use store all the status into self (current context)
     sd sp, 0(a0)
     // Save registers
+    // Why not all the registers? Because we call 'switch', the compiler automatically save the callee-should-save registers
+    // So we just have to save the caller-should-save registers into the context
     STORE ra, 0
     STORE s0, 2
     STORE s1, 3
@@ -33,13 +36,12 @@
     csrr s11, satp
     STORE s11, 1
 
-    // Switch
+    // Switch to the _target.content_addr
     ld sp, 0(a1)
     // Restore
     LOAD s11, 1
-    csrw satp, s11
-    // TLB Refresh
-    sfence.vma
+    csrw satp, s11  // Page table address switch
+    sfence.vma      // TLB Refresh
     LOAD ra, 0
     LOAD s0, 2
     LOAD s1, 3
@@ -55,6 +57,6 @@
     LOAD s11, 13
     addi sp, sp, 14 * WSIZE
 
-    // Start running
+    // Start running with _target.content_addr = 0, TODO: why?
     sd zero, 0(a1)
     ret

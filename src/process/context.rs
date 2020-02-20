@@ -2,12 +2,14 @@ use crate::trap::frame::TrapFrame;
 use core::mem::zeroed;
 use riscv::register::sstatus;
 
+// Why there is a repr(C)
+// To ensure the compiler will not optimize the order so that the asm code could access
 #[repr(C)]
 pub struct Content {
     pub ra: usize,    // Return address
     satp: usize,      // Page table register
     s: [usize; 12],   // Callee saved
-    frame: TrapFrame, // Trap frame
+    frame: TrapFrame, // Trap frame, we use features of *trap* frame to initialize the thread
 }
 
 impl Content {
@@ -42,14 +44,16 @@ impl Content {
     }
 }
 
+// How could we describe a context?
+// The *content* will be stored in the stack, we only have to take care of the address of the stack top
 #[repr(C)]
 pub struct Context {
     pub content_addr: usize,
 }
 
 impl Context {
-    #[naked]
-    #[inline(never)]
+    #[naked]            // Do not use *prologue* and *epilogue*, because the asm has already done
+    #[inline(never)]    // Do not inline, because we're using call/ret to switch thread
     pub unsafe extern "C" fn switch(&mut self, _target: &mut Context) {
         asm!(include_str!("switch.asm") :::: "volatile");
     }
