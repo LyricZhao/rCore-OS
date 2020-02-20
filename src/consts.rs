@@ -12,3 +12,5 @@ pub const PHYSICAL_MEMORY_OFFSET: usize = 0xffffffff_40000000;
 
 // Note that PAGE_SIZE is always (1 << 12) bytes in riscv64
 pub const PAGE_SIZE: usize = 4096;
+
+pub const KERNEL_STACK_SIZE: usize = 0x80000; // 512 KB

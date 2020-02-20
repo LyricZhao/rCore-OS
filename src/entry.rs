@@ -26,7 +26,13 @@ pub extern "C" fn kernel_entry() -> ! {
     crate::timer::initialize();
 
     // Memory initialization (initialize using physical page range)
-    crate::memory::initialize((kernel_end_paddr / PAGE_SIZE) + 1, PHYSICAL_MEMORY_END / PAGE_SIZE);
+    crate::memory::initialize(
+        (kernel_end_paddr / PAGE_SIZE) + 1,
+        PHYSICAL_MEMORY_END / PAGE_SIZE,
+    );
+
+    // Thread test
+    crate::process::initialize();
 
     loop {}
 }
