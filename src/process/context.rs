@@ -27,8 +27,8 @@ impl Content {
                 frame.sepc = entry;
                 frame.sstatus = sstatus::read();
                 frame.sstatus.set_spp(sstatus::SPP::Supervisor); // return with S mode
-                frame.sstatus.set_spie(true);   // Same as below
-                frame.sstatus.set_sie(false);   // return with async interrupt enabled
+                frame.sstatus.set_spie(true); // Same as below
+                frame.sstatus.set_sie(false); // return with async interrupt enabled
                 frame
             },
         }
@@ -51,8 +51,8 @@ pub struct Context {
 }
 
 impl Context {
-    #[naked]            // Do not use *prologue* and *epilogue*, because the asm has already done
-    #[inline(never)]    // Do not inline, because we're using call/ret to switch thread
+    #[naked] // Do not use *prologue* and *epilogue*, because the asm has already done
+    #[inline(never)] // Do not inline, because we're using call/ret to switch thread
     pub unsafe extern "C" fn switch(&mut self, _target: &mut Context) {
         asm!(include_str!("switch.asm") :::: "volatile");
     }
