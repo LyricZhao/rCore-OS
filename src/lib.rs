@@ -8,7 +8,6 @@
 mod io;
 
 mod consts;
-mod context;
 mod entry;
 mod interrupt;
 mod lang;
@@ -16,5 +15,6 @@ mod memory;
 mod process;
 mod sbi;
 mod timer;
+mod trap;
 
 extern crate alloc;

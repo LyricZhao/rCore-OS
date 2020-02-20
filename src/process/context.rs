@@ -1,15 +1,6 @@
+use crate::trap::frame::TrapFrame;
 use core::mem::zeroed;
-use riscv::register::{scause::Scause, sstatus, sstatus::Sstatus};
-
-// C-like Memory layout (in order)
-#[repr(C)]
-pub struct TrapFrame {
-    pub x: [usize; 32],   // General purpose registers
-    pub sstatus: Sstatus, // Supervisor status register
-    pub sepc: usize,      // Supervisor exception PC
-    pub stval: usize,     // Supervisor trap value
-    pub scause: Scause,   // Cause of the exception
-}
+use riscv::register::sstatus;
 
 #[repr(C)]
 pub struct Content {
@@ -60,7 +51,7 @@ impl Context {
     #[naked]
     #[inline(never)]
     pub unsafe extern "C" fn switch(&mut self, _target: &mut Context) {
-        asm!(include_str!("process/switch.asm") :::: "volatile");
+        asm!(include_str!("switch.asm") :::: "volatile");
     }
 
     pub fn null() -> Context {

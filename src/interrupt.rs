@@ -3,8 +3,8 @@ use riscv::register::{
     sscratch, sstatus, stvec,
 };
 
-use crate::context::TrapFrame;
 use crate::timer::{set_next_event, TICKS};
+use crate::trap::frame::TrapFrame;
 
 global_asm!(include_str!("trap/trap.asm"));
 
