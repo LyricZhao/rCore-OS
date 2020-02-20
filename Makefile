@@ -29,4 +29,16 @@ qemu: build
 		-bios default \
 		-device loader,file=$(bin),addr=0x80200000
 
+gdb-server: build
+	qemu-system-riscv64 \
+		-machine virt \
+		-nographic \
+		-bios default \
+		-s \
+		-S \
+		-device loader,file=$(bin),addr=0x80200000
+
+gdb: build
+	riscv64-unknown-elf-gdb $(kernel)
+
 run: build qemu
