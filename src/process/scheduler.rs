@@ -2,12 +2,20 @@ use crate::process::ThreadID;
 use alloc::vec::Vec;
 
 pub trait Scheduler {
+    // Add to the waiting list
     fn push(&mut self, id: ThreadID);
+
+    // Give me a thread to run from the available ones
     fn pop(&mut self) -> Option<ThreadID>;
+
+    // Timer tick
     fn tick(&mut self) -> bool;
+
+    // A thread is exiting
     fn exit(&mut self, id: ThreadID);
 }
 
+// Round Robin Scheduler
 #[derive(Default)]
 struct RoundRobinInfo {
     valid: bool,
@@ -54,17 +62,17 @@ impl Scheduler for RoundRobinScheduler {
     }
 
     fn pop(&mut self) -> Option<ThreadID> {
-        let next = self.threads[0].next;
-        if next != 0 {
-            let next = self.threads[next].next;
-            let prev = self.threads[next].prev;
+        let ret = self.threads[0].next;
+        if ret != 0 {
+            let next = self.threads[ret].next;
+            let prev = self.threads[ret].prev;
             self.threads[next].prev = prev;
             self.threads[prev].next = next;
-            self.threads[next].prev = 0;
-            self.threads[next].next = 0;
-            self.threads[next].valid = false;
-            self.current = next;
-            Some(next - 1)
+            self.threads[ret].prev = 0;
+            self.threads[ret].next = 0;
+            self.threads[ret].valid = false;
+            self.current = ret;
+            Some(ret - 1)
         } else {
             None
         }

@@ -12,7 +12,11 @@ pub struct ThreadPool {
 impl ThreadPool {
     pub fn new(size: usize, scheduler: Box<dyn Scheduler>) -> ThreadPool {
         ThreadPool {
-            threads: Vec::with_capacity(size),
+            threads: {
+                let mut vec = Vec::new();
+                vec.resize_with(size, Default::default);
+                vec
+            },
             scheduler,
         }
     }
@@ -35,29 +39,35 @@ impl ThreadPool {
         self.scheduler.push(id);
     }
 
-    // TODO: what is Option.take?
+    // Acquire one from the pool and run
     pub fn acquire(&mut self) -> Option<(ThreadID, Box<Thread>)> {
         if let Some(id) = self.scheduler.pop() {
             let mut info = self.threads[id].as_mut().unwrap();
             info.status = ThreadStatus::Running(id);
+            // Once we use 'take', the info.thread will be 'None' after used
             Some((id, info.thread.take().unwrap()))
         } else {
             None
         }
     }
 
+    // Running for a long time or exit
     pub fn retrieve(&mut self, id: ThreadID, thread: Box<Thread>) {
+        // Exited
         if self.threads[id].is_none() {
             return;
         }
+
         let mut info = self.threads[id].as_mut().unwrap();
         info.thread = Some(thread);
         if let ThreadStatus::Running(_) = info.status {
+            // Running -> Ready
             info.status = ThreadStatus::Ready;
             self.scheduler.push(id);
         }
     }
 
+    // Check whether we need a switch when ticked
     pub fn tick(&mut self) -> bool {
         self.scheduler.tick()
     }

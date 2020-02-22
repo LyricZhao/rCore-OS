@@ -55,10 +55,13 @@ fn supervisor_timer_handler() {
     tick();
 }
 
+// Why we are using this?
+// Idle status can not be interrupted (e.g. the scheduling process running)
 #[inline(always)]
 pub fn disable_and_store() -> usize {
     let sstatus: usize;
     unsafe {
+        // Disable all the async interrupt and return the old one
         asm!("csrci sstatus, 1 << 1" : "=r"(sstatus) ::: "volatile");
     }
     sstatus
@@ -67,6 +70,7 @@ pub fn disable_and_store() -> usize {
 #[inline(always)]
 pub fn restore(flags: usize) {
     unsafe {
+        // Restore to the original one
         asm!("csrs sstatus, $0" :: "r"(flags) :: "volatile");
     }
 }
@@ -74,6 +78,7 @@ pub fn restore(flags: usize) {
 #[inline(always)]
 pub fn enable_and_wfi() {
     unsafe {
+        // Enable interrupt and wait for the next
         asm!("csrsi sstatus, 1 << 1; wfi" :::: "volatile");
     }
 }

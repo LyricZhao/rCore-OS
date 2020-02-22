@@ -46,10 +46,11 @@ pub fn initialize() {
     PROCESSOR.initialize(idle, Box::new(pool));
 
     for i in 0..5 {
+        println!("Adding {}", i);
         PROCESSOR.add_thread({
             let thread = Thread::new_kernel(test_thread as usize);
             thread.append_args([i, 0, 0]);
             thread
-        })
+        });
     }
 }
