@@ -1,8 +1,14 @@
 use crate::process::thread::Thread;
 
 mod context;
+mod pool;
+mod scheduler;
 mod stack;
+mod status;
 mod thread;
+
+pub type ThreadID = usize;
+pub type ExitCode = usize;
 
 #[no_mangle]
 pub extern "C" fn temp_thread(from: &mut Thread, current: &mut Thread) {

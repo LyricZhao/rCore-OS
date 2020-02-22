@@ -2,6 +2,7 @@ use crate::process::context::Context;
 use crate::process::stack::KernelStack;
 use alloc::boxed::Box;
 use riscv::register::satp;
+use crate::process::status::Status;
 
 pub struct Thread {
     pub context: Context,
@@ -39,4 +40,9 @@ impl Thread {
             self.context.append_args(args);
         }
     }
+}
+
+pub struct ThreadInfo {
+    pub(crate) status: Status,
+    pub(crate) thread: Option<Box<Thread>>
 }
