@@ -1,31 +1,55 @@
+use crate::process::pool::ThreadPool;
+use crate::process::processor::Processor;
+use crate::process::scheduler::RoundRobinScheduler;
 use crate::process::thread::Thread;
+use alloc::boxed::Box;
 
 mod context;
 mod pool;
+mod processor;
 mod scheduler;
 mod stack;
-mod status;
 mod thread;
 
 pub type ThreadID = usize;
 pub type ExitCode = usize;
 
+static PROCESSOR: Processor = Processor::new();
+
 #[no_mangle]
-pub extern "C" fn temp_thread(from: &mut Thread, current: &mut Thread) {
-    println!("Hello world! (from temp_thread)");
-    current.switch_to(from);
+pub extern "C" fn test_thread(arg: usize) -> ! {
+    println!("Begin of thread {}", arg);
+    for _i in 0..800 {
+        print!("{}", arg);
+    }
+    println!("\nEnd  of thread {}", arg);
+    exit(0);
+}
+
+pub fn run() {
+    PROCESSOR.run();
+}
+
+pub fn exit(code: ExitCode) -> ! {
+    PROCESSOR.exit(code)
+}
+
+pub fn tick() {
+    PROCESSOR.tick();
 }
 
 pub fn initialize() {
-    let mut boot_thread = Thread::boot();
-    let mut temp_thread = Thread::new_kernel(temp_thread as usize);
+    let scheduler = RoundRobinScheduler::new(1);
+    let pool = ThreadPool::new(128, Box::new(scheduler));
+    let idle = Thread::new_kernel(Processor::idle_main as usize);
+    idle.append_args([&PROCESSOR as *const Processor as usize, 0, 0]);
+    PROCESSOR.initialize(idle, Box::new(pool));
 
-    temp_thread.append_args([
-        &*boot_thread as *const Thread as usize,
-        &*temp_thread as *const Thread as usize,
-        0,
-    ]);
-    boot_thread.switch_to(&mut temp_thread);
-    println!("Switch back to boot thread");
-    loop {}
+    for i in 0..5 {
+        PROCESSOR.add_thread({
+            let thread = Thread::new_kernel(test_thread as usize);
+            thread.append_args([i, 0, 0]);
+            thread
+        })
+    }
 }

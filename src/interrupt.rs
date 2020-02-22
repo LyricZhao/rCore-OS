@@ -3,7 +3,8 @@ use riscv::register::{
     sscratch, sstatus, stvec,
 };
 
-use crate::timer::{set_next_event, TICKS};
+use crate::process::tick;
+use crate::timer::set_next_event;
 use crate::trap::frame::TrapFrame;
 
 global_asm!(include_str!("trap/trap.asm"));
@@ -51,10 +52,28 @@ fn page_fault(frame: &mut TrapFrame) {
 
 fn supervisor_timer_handler() {
     set_next_event();
+    tick();
+}
+
+#[inline(always)]
+pub fn disable_and_store() -> usize {
+    let sstatus: usize;
     unsafe {
-        TICKS += 1;
-        if TICKS == 100 {
-            TICKS = 0;
-        }
+        asm!("csrci sstatus, 1 << 1" : "=r"(sstatus) ::: "volatile");
+    }
+    sstatus
+}
+
+#[inline(always)]
+pub fn restore(flags: usize) {
+    unsafe {
+        asm!("csrs sstatus, $0" :: "r"(flags) :: "volatile");
+    }
+}
+
+#[inline(always)]
+pub fn enable_and_wfi() {
+    unsafe {
+        asm!("csrsi sstatus, 1 << 1; wfi" :::: "volatile");
     }
 }

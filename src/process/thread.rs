@@ -1,8 +1,8 @@
 use crate::process::context::Context;
 use crate::process::stack::KernelStack;
+use crate::process::ThreadID;
 use alloc::boxed::Box;
 use riscv::register::satp;
-use crate::process::status::Status;
 
 pub struct Thread {
     pub context: Context,
@@ -42,7 +42,16 @@ impl Thread {
     }
 }
 
+// TODO: fix them
+#[derive(Clone)]
+pub enum ThreadStatus {
+    Ready,
+    Running(ThreadID),
+    // Sleeping,
+    // Exited(ExitCode),
+}
+
 pub struct ThreadInfo {
-    pub(crate) status: Status,
-    pub(crate) thread: Option<Box<Thread>>
+    pub(crate) status: ThreadStatus,
+    pub(crate) thread: Option<Box<Thread>>,
 }

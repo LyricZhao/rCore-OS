@@ -1,20 +1,19 @@
-use alloc::vec::Vec;
-use crate::process::thread::{ThreadInfo, Thread};
-use alloc::boxed::Box;
 use crate::process::scheduler::Scheduler;
+use crate::process::thread::{Thread, ThreadInfo, ThreadStatus};
 use crate::process::ThreadID;
-use crate::process::status::Status;
+use alloc::boxed::Box;
+use alloc::vec::Vec;
 
 pub struct ThreadPool {
     threads: Vec<Option<ThreadInfo>>,
-    scheduler: Box<dyn Scheduler>
+    scheduler: Box<dyn Scheduler>,
 }
 
 impl ThreadPool {
     pub fn new(size: usize, scheduler: Box<dyn Scheduler>) -> ThreadPool {
         ThreadPool {
             threads: Vec::with_capacity(size),
-            scheduler
+            scheduler,
         }
     }
 
@@ -29,10 +28,10 @@ impl ThreadPool {
 
     pub fn add(&mut self, thread: Box<Thread>) {
         let id = self.alloc_id();
-        self.threads[id] = Some(ThreadInfo{
-            status: Status::Ready,
+        self.threads[id] = Some(ThreadInfo {
+            status: ThreadStatus::Ready,
             thread: Some(thread),
-        })
+        });
         self.scheduler.push(id);
     }
 
@@ -40,7 +39,7 @@ impl ThreadPool {
     pub fn acquire(&mut self) -> Option<(ThreadID, Box<Thread>)> {
         if let Some(id) = self.scheduler.pop() {
             let mut info = self.threads[id].as_mut().unwrap();
-            info.status = Status::Running(id);
+            info.status = ThreadStatus::Running(id);
             Some((id, info.thread.take().unwrap()))
         } else {
             None
@@ -53,8 +52,8 @@ impl ThreadPool {
         }
         let mut info = self.threads[id].as_mut().unwrap();
         info.thread = Some(thread);
-        if let Status::Running(_) = info.status {
-            info.status = Status::Ready;
+        if let ThreadStatus::Running(_) = info.status {
+            info.status = ThreadStatus::Ready;
             self.scheduler.push(id);
         }
     }

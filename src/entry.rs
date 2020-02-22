@@ -22,17 +22,20 @@ pub extern "C" fn kernel_entry() -> ! {
     // Interrupt initialization
     crate::interrupt::initialize();
 
-    // Timer initialization
-    crate::timer::initialize();
-
     // Memory initialization (initialize using physical page range)
     crate::memory::initialize(
         (kernel_end_paddr / PAGE_SIZE) + 1,
         PHYSICAL_MEMORY_END / PAGE_SIZE,
     );
 
-    // Thread test
+    // Thread initialization
     crate::process::initialize();
+
+    // Timer initialization
+    crate::timer::initialize();
+
+    // Start threads
+    crate::process::run();
 
     loop {}
 }
