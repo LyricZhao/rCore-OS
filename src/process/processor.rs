@@ -69,14 +69,15 @@ impl Processor {
                 // Wait for next interrupt
                 enable_and_wfi();
 
-                // TODO: is that other kernel thread can not receive interrupt?
+                // Is that other kernel thread can not receive interrupt? No! __trap_ret enables it!
                 // Disable and handle the switch
                 disable_and_store();
             }
         }
     }
 
-    // TODO: where could this function be executed?
+    // Where could this function be executed?
+    // I may say that not a specific thread but from interrupt
     pub fn tick(&self) {
         let status = self.status();
         if !status.current.is_none() {
@@ -96,7 +97,7 @@ impl Processor {
                 // Restore interrupt
                 restore(flags);
             }
-        }
+        } // Else for continuing idle thread (back to idle from interrupt)
     }
 
     pub fn exit(&self, _code: ExitCode) -> ! {

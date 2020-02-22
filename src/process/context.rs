@@ -28,7 +28,7 @@ impl Content {
                 frame.sstatus = sstatus::read();
                 frame.sstatus.set_spp(sstatus::SPP::Supervisor); // return with S mode
                 frame.sstatus.set_spie(true); // Same as below
-                frame.sstatus.set_sie(false); // return with async interrupt enabled
+                frame.sstatus.set_sie(false); // return with async interrupt enabled (NOTE: it will be very useful in the thread scheduling)
                 frame
             },
         }
