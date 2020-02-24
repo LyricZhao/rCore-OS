@@ -11,7 +11,7 @@ objcopy := rust-objcopy --binary-architecture=riscv64
 build: $(bin)
 
 kernel:
-	cargo +nightly build
+	cargo build
 
 $(bin): kernel
 	$(objcopy) $(kernel) --strip-all -O binary $@
@@ -20,7 +20,7 @@ asm:
 	$(objdump) -d $(kernel) | less
 
 clean:
-	cargo +nightly clean
+	cargo clean
 
 qemu: build
 	qemu-system-riscv64 \
