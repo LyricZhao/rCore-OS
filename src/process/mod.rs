@@ -40,7 +40,7 @@ pub fn tick() {
 }
 
 pub fn initialize() {
-    let scheduler = RoundRobinScheduler::new(1);
+    let scheduler = RoundRobinScheduler::new(2);
     let pool = ThreadPool::new(128, Box::new(scheduler));
     let idle = Thread::new_kernel(Processor::idle_main as usize);
     idle.append_args([&PROCESSOR as *const Processor as usize, 0, 0]);
@@ -54,4 +54,15 @@ pub fn initialize() {
             thread
         });
     }
+
+    extern "C" {
+        fn _user_img_start();
+        fn _user_img_end();
+    }
+
+    let data = unsafe {
+        core::slice::from_raw_parts(_user_img_start as *const u8, _user_img_end as usize - _user_img_start as usize)
+    };
+    let user_thread = Thread::new_user(data);
+    PROCESSOR.add_thread(user_thread);
 }

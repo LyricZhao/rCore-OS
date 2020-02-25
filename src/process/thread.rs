@@ -33,7 +33,6 @@ impl Thread {
         }
     }
 
-    #[allow(dead_code)]
     pub fn new_user(data: &[u8]) -> Box<Thread> {
         let elf = ElfFile::new(data).unwrap();
 
@@ -50,9 +49,11 @@ impl Thread {
         }
 
         let entry = elf.header.pt2.entry_point() as usize;
+        // The manager will add other areas into it
         let mut manager = elf.new_manager();
 
         let user_stack = {
+            // User stack will be in a fixed space of kernel
             let (bottom, top) = (USER_STACK_OFFSET, USER_STACK_OFFSET + USER_STACK_SIZE);
             manager.push(
                 bottom,
@@ -64,10 +65,10 @@ impl Thread {
             top
         };
 
-        let stack = KernelStack::new();
+        let kernel_stack = KernelStack::new();
         Box::new(Thread {
-            context: unsafe { Context::new_user(entry, user_stack, stack.top(), manager.token()) },
-            stack,
+            context: unsafe { Context::new_user(entry, user_stack, kernel_stack.top(), manager.token()) },
+            stack: kernel_stack
         })
     }
 

@@ -6,10 +6,11 @@ fn main() {
     if let Ok(user_img) = std::env::var("USER_IMG") {
         println!("cargo:rerun-if-changed={}", user_img);
     }
-    gen_link_user_asm().unwrap();
+    gen_user_asm().unwrap();
 }
 
-fn gen_link_user_asm() -> Result<()> {
+// I think it's not like 'link' but like 'include'
+fn gen_user_asm() -> Result<()> {
     let mut f = File::create("src/link_user.S").unwrap();
     let user_img = std::env::var("USER_IMG").unwrap();
 

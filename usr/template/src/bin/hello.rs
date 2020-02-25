@@ -9,7 +9,7 @@ extern crate template;
 #[no_mangle]
 pub fn main() -> usize {
     for _ in 0..10 {
-        println!("Hello, world! (from user mode bin)");
+        println!("Hello, world! (from user mode binary)");
     }
     0
 }

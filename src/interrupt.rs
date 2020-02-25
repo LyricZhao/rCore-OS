@@ -37,6 +37,7 @@ fn trap_handler(frame: &mut TrapFrame) {
 }
 
 fn syscall(frame: &mut TrapFrame) {
+    // Return address (skip ecall)
     frame.sepc += 4;
     let ret = crate::syscall::syscall(frame.x[17], [frame.x[10], frame.x[11], frame.x[12]]);
     frame.x[10] = ret as usize;

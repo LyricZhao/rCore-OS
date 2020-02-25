@@ -47,10 +47,7 @@ impl Handler for Linear {
         attr.apply(page_table.map(vaddr, vaddr - self.offset));
     }
 
-    fn page_copy(&self, page_table: &mut PageTable, vaddr: usize, src: usize, length: usize) {
-        let paddr = page_table.get_entry(vaddr).unwrap().entry.addr().as_usize();
-        assert_eq!(vaddr, paddr_to_vaddr(paddr));
-        assert_eq!(vaddr, paddr + self.offset);
+    fn page_copy(&self, _page_table: &mut PageTable, vaddr: usize, src: usize, length: usize) {
         unsafe {
             let dst = core::slice::from_raw_parts_mut(vaddr as *mut u8, PAGE_SIZE);
             if length > 0 {
@@ -87,6 +84,7 @@ impl Handler for ByFrame {
         attr.apply(page_table.map(vaddr, paddr));
     }
 
+    // TODO: why it's different there?
     fn page_copy(&self, page_table: &mut PageTable, vaddr: usize, src: usize, length: usize) {
         let paddr = page_table.get_entry(vaddr).unwrap().entry.addr().as_usize();
         unsafe {

@@ -1,6 +1,8 @@
 use crate::consts::*;
 
 global_asm!(include_str!("boot/entry64.asm"));
+
+// User program code
 global_asm!(include_str!("link_user.S"));
 
 #[no_mangle]

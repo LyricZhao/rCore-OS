@@ -8,6 +8,7 @@ fn sys_call(id: Syscall, arg0: usize, arg1: usize, arg2: usize, arg3: usize) -> 
     let id = id as usize;
     let mut ret: i64;
     unsafe {
+        // TODO: learn Rust inline ASM sometime
         asm!(
             "ecall"
             : "={x10}"(ret)

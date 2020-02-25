@@ -96,6 +96,7 @@ impl Manager {
         let area = Area::new(start, end, Box::new(handler), attr);
         area.map(&mut self.page_table);
         if let Some((src, length)) = data {
+            // If there is source address, then copy it
             area.page_copy(&mut self.page_table, src, length);
         }
         self.areas.push(area);

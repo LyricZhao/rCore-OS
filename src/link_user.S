@@ -4,6 +4,6 @@
     .global _user_img_start
     .global _user_img_end
 _user_img_start:
-    .incbin "target/riscv64imac-unknown-none-elf/debug/hello"
+    .incbin "usr/template/target/riscv64imac-unknown-none-elf/debug/hello"
 _user_img_end:
 
