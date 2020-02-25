@@ -112,4 +112,8 @@ impl Manager {
     pub unsafe fn activate(&self) {
         self.page_table.activate();
     }
+
+    pub fn token(&self) -> usize {
+        self.page_table.token()
+    }
 }

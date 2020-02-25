@@ -1,8 +1,13 @@
+use crate::consts::{USER_STACK_OFFSET, USER_STACK_SIZE};
+use crate::memory::manager::attr::MemoryAttr;
+use crate::memory::manager::handler::ByFrame;
 use crate::process::context::Context;
+use crate::process::elf::ElfExt;
 use crate::process::stack::KernelStack;
 use crate::process::{ExitCode, ThreadID};
 use alloc::boxed::Box;
 use riscv::register::satp;
+use xmas_elf::{header, ElfFile};
 
 pub struct Thread {
     pub context: Context,
@@ -26,6 +31,44 @@ impl Thread {
                 stack,
             })
         }
+    }
+
+    #[allow(dead_code)]
+    pub fn new_user(data: &[u8]) -> Box<Thread> {
+        let elf = ElfFile::new(data).unwrap();
+
+        match elf.header.pt2.type_().as_type() {
+            header::Type::Executable => {
+                println!("Executable program.");
+            }
+            header::Type::SharedObject => {
+                panic!("Shared object is not supported.");
+            }
+            _ => {
+                panic!("Unsupported ELF type.");
+            }
+        }
+
+        let entry = elf.header.pt2.entry_point() as usize;
+        let mut manager = elf.new_manager();
+
+        let user_stack = {
+            let (bottom, top) = (USER_STACK_OFFSET, USER_STACK_OFFSET + USER_STACK_SIZE);
+            manager.push(
+                bottom,
+                top,
+                MemoryAttr::new().set_user(),
+                ByFrame::new(),
+                None,
+            );
+            top
+        };
+
+        let stack = KernelStack::new();
+        Box::new(Thread {
+            context: unsafe { Context::new_user(entry, user_stack, stack.top(), manager.token()) },
+            stack,
+        })
     }
 
     pub fn boot() -> Box<Thread> {

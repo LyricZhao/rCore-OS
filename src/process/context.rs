@@ -34,6 +34,27 @@ impl Content {
         }
     }
 
+    fn new_user(entry: usize, user_stack: usize, satp: usize) -> Self {
+        extern "C" {
+            fn __trap_ret();
+        };
+        Content {
+            ra: __trap_ret as usize,
+            satp,
+            s: [0; 12],
+            frame: {
+                let mut frame: TrapFrame = unsafe { zeroed() };
+                frame.x[2] = user_stack;
+                frame.sepc = entry;
+                frame.sstatus = sstatus::read();
+                frame.sstatus.set_spie(true);
+                frame.sstatus.set_sie(false);
+                frame.sstatus.set_spp(sstatus::SPP::User);
+                frame
+            },
+        }
+    }
+
     unsafe fn push_at(self, stack_top: usize) -> Context {
         let ptr = (stack_top as *mut Content).sub(1); // sub means minus sizeof(Content)
         *ptr = self;
@@ -66,6 +87,15 @@ impl Context {
     // New kernel thread (S mode)
     pub unsafe fn new_kernel(entry: usize, kernel_stack_top: usize, satp: usize) -> Context {
         Content::new_kernel(entry, kernel_stack_top, satp).push_at(kernel_stack_top)
+    }
+
+    pub unsafe fn new_user(
+        entry: usize,
+        user_stack: usize,
+        kernel_stack: usize,
+        satp: usize,
+    ) -> Context {
+        Content::new_user(entry, user_stack, satp).push_at(kernel_stack)
     }
 
     // We can use the trap frame (as an initialization) to pass arguments

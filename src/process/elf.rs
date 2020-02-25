@@ -5,7 +5,7 @@ use xmas_elf::program::Type::Load;
 use xmas_elf::program::{Flags, SegmentData};
 use xmas_elf::ElfFile;
 
-trait ElfExt {
+pub trait ElfExt {
     fn new_manager(&self) -> Manager;
 }
 
