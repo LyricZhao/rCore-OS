@@ -2,15 +2,23 @@ target := riscv64imac-unknown-none-elf
 mode := debug
 kernel := target/$(target)/$(mode)/os
 bin := target/$(target)/$(mode)/kernel.bin
+usr := target/$(target)/debug/hello
 
 objdump := rust-objdump --arch-name=riscv64
 objcopy := rust-objcopy --binary-architecture=riscv64
 
-.PHONY: kernel build clean qemu run
+.PHONY: kernel build clean qemu run usr
+
+export USER_IMG = target/$(target)/debug/hello
+
+usr:
+	cd usr/template && cargo build && cd ../..
+
+$(usr): usr
 
 build: $(bin)
 
-kernel:
+kernel: $(usr)
 	cargo build
 
 $(bin): kernel
