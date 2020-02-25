@@ -5,6 +5,7 @@ use crate::process::thread::Thread;
 use alloc::boxed::Box;
 
 mod context;
+mod elf;
 mod pool;
 mod processor;
 mod scheduler;

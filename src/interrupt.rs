@@ -31,8 +31,15 @@ fn trap_handler(frame: &mut TrapFrame) {
         Trap::Exception(Exception::InstructionPageFault) => page_fault(frame),
         Trap::Exception(Exception::LoadPageFault) => page_fault(frame),
         Trap::Exception(Exception::StorePageFault) => page_fault(frame),
+        Trap::Exception(Exception::UserEnvCall) => syscall(frame),
         _ => panic!("undefined trap."),
     }
+}
+
+fn syscall(frame: &mut TrapFrame) {
+    frame.sepc += 4;
+    let ret = crate::syscall::syscall(frame.x[17], [frame.x[10], frame.x[11], frame.x[12]]);
+    frame.x[10] = ret as usize;
 }
 
 fn breakpoint_handler(sepc: &mut usize) {

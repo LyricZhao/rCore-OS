@@ -43,4 +43,16 @@ impl Area {
         let p4 = (end - 1) / PAGE_SIZE + 1;
         !((p1 >= p4) || (p2 <= p3))
     }
+
+    pub fn page_copy(&self, page_table: &mut PageTable, src: usize, length: usize) {
+        let mut length = length;
+        let mut src = src;
+        for page in VirtualPageRange::new(self.start, self.end) {
+            self.handler.page_copy(page_table, page, src, if length < PAGE_SIZE { length } else { PAGE_SIZE });
+            src += PAGE_SIZE;
+            if length >= PAGE_SIZE {
+                length -= PAGE_SIZE;
+            }
+        }
+    }
 }

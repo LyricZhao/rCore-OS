@@ -59,7 +59,7 @@ impl PageTable {
     }
 
     // Get the mapping
-    fn get_entry(&mut self, vaddr: usize) -> Option<&mut PageEntry> {
+    pub fn get_entry(&mut self, vaddr: usize) -> Option<&mut PageEntry> {
         let page = Page::of_addr(VirtAddr::new(vaddr));
         if let Ok(entry) = self.page_table.ref_entry(page.clone()) {
             let entry = unsafe { &mut *(entry as *mut PageTableEntry) };

@@ -48,6 +48,7 @@ pub fn kernel_remap() {
         boot_stack_top as usize,
         MemoryAttr::new(),
         Linear::new(PHYSICAL_MEMORY_OFFSET),
+        None,
     );
     unsafe {
         manager.activate();
