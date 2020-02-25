@@ -48,7 +48,7 @@ impl Manager {
             etext as usize,
             MemoryAttr::new().set_read_only().set_executable(),
             Linear::new(offset),
-            None
+            None,
         );
         // .rodata R
         self.push(
@@ -56,7 +56,7 @@ impl Manager {
             erodata as usize,
             MemoryAttr::new().set_read_only(),
             Linear::new(offset),
-            None
+            None,
         );
         // .data RW
         self.push(
@@ -64,7 +64,7 @@ impl Manager {
             edata as usize,
             MemoryAttr::new().set_read_only(),
             Linear::new(offset),
-            None
+            None,
         );
         // .bss RW
         self.push(
@@ -72,7 +72,7 @@ impl Manager {
             ebss as usize,
             MemoryAttr::new(),
             Linear::new(offset),
-            None
+            None,
         );
         // Physical memory RW
         self.push(
@@ -80,12 +80,19 @@ impl Manager {
             paddr_to_vaddr(PHYSICAL_MEMORY_END),
             MemoryAttr::new(),
             Linear::new(offset),
-            None
+            None,
         );
     }
 
     // Push a new area
-    pub fn push(&mut self, start: usize, end: usize, attr: MemoryAttr, handler: impl Handler, data: Option<(usize, usize)>) {
+    pub fn push(
+        &mut self,
+        start: usize,
+        end: usize,
+        attr: MemoryAttr,
+        handler: impl Handler,
+        data: Option<(usize, usize)>,
+    ) {
         let area = Area::new(start, end, Box::new(handler), attr);
         area.map(&mut self.page_table);
         if let Some((src, length)) = data {

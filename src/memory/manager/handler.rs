@@ -1,8 +1,8 @@
-use crate::memory::{frame_alloc, paddr_to_vaddr};
+use crate::consts::PAGE_SIZE;
 use crate::memory::manager::attr::MemoryAttr;
 use crate::memory::manager::paging::table::PageTable;
+use crate::memory::{frame_alloc, paddr_to_vaddr};
 use alloc::boxed::Box;
-use crate::consts::PAGE_SIZE;
 
 // Memory handler is more likely a wrapper (for virtual pages in memory area, setting up the mapping by different ways).
 // The handler must ensure no overlapping
@@ -48,26 +48,20 @@ impl Handler for Linear {
     }
 
     fn page_copy(&self, page_table: &mut PageTable, vaddr: usize, src: usize, length: usize) {
-        let paddr = page_table.get_entry(vaddr)
-            .unwrap()
-            .entry
-            .addr()
-            .as_usize();
+        let paddr = page_table.get_entry(vaddr).unwrap().entry.addr().as_usize();
         assert_eq!(vaddr, paddr_to_vaddr(paddr));
         assert_eq!(vaddr, paddr + self.offset);
         unsafe {
-            let dst = core::slice::from_raw_parts_mut(
-                vaddr as *mut u8,
-                PAGE_SIZE,
-            );
+            let dst = core::slice::from_raw_parts_mut(vaddr as *mut u8, PAGE_SIZE);
             if length > 0 {
-                let src = core::slice::from_raw_parts(
-                    src as *const u8,
-                    PAGE_SIZE,
-                );
-                for i in 0..length { dst[i] = src[i]; }
+                let src = core::slice::from_raw_parts(src as *const u8, PAGE_SIZE);
+                for i in 0..length {
+                    dst[i] = src[i];
+                }
             }
-            for i in length..PAGE_SIZE { dst[i] = 0; }
+            for i in length..PAGE_SIZE {
+                dst[i] = 0;
+            }
         }
     }
 }
@@ -94,24 +88,18 @@ impl Handler for ByFrame {
     }
 
     fn page_copy(&self, page_table: &mut PageTable, vaddr: usize, src: usize, length: usize) {
-        let paddr = page_table.get_entry(vaddr)
-            .unwrap()
-            .entry
-            .addr()
-            .as_usize();
+        let paddr = page_table.get_entry(vaddr).unwrap().entry.addr().as_usize();
         unsafe {
-            let dst = core::slice::from_raw_parts_mut(
-                paddr_to_vaddr(paddr) as *mut u8,
-                PAGE_SIZE,
-            );
+            let dst = core::slice::from_raw_parts_mut(paddr_to_vaddr(paddr) as *mut u8, PAGE_SIZE);
             if length > 0 {
-                let src = core::slice::from_raw_parts(
-                    src as *const u8,
-                    PAGE_SIZE,
-                );
-                for i in 0..length { dst[i] = src[i]; }
+                let src = core::slice::from_raw_parts(src as *const u8, PAGE_SIZE);
+                for i in 0..length {
+                    dst[i] = src[i];
+                }
             }
-            for i in length..PAGE_SIZE { dst[i] = 0; }
+            for i in length..PAGE_SIZE {
+                dst[i] = 0;
+            }
         }
     }
 }

@@ -48,7 +48,16 @@ impl Area {
         let mut length = length;
         let mut src = src;
         for page in VirtualPageRange::new(self.start, self.end) {
-            self.handler.page_copy(page_table, page, src, if length < PAGE_SIZE { length } else { PAGE_SIZE });
+            self.handler.page_copy(
+                page_table,
+                page,
+                src,
+                if length < PAGE_SIZE {
+                    length
+                } else {
+                    PAGE_SIZE
+                },
+            );
             src += PAGE_SIZE;
             if length >= PAGE_SIZE {
                 length -= PAGE_SIZE;

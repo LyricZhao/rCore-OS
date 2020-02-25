@@ -41,6 +41,10 @@ gdb-server: build
 gdb: build
 	riscv64-unknown-elf-gdb $(kernel)
 
+fmt:
+	cargo fmt
+	cd usr/template && cargo fmt
+
 run: build qemu
 
 push:

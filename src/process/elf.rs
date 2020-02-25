@@ -1,9 +1,9 @@
-use crate::memory::manager::Manager;
-use xmas_elf::ElfFile;
-use xmas_elf::program::Type::Load;
-use xmas_elf::program::{SegmentData, Flags};
-use crate::memory::manager::handler::ByFrame;
 use crate::memory::manager::attr::MemoryAttr;
+use crate::memory::manager::handler::ByFrame;
+use crate::memory::manager::Manager;
+use xmas_elf::program::Type::Load;
+use xmas_elf::program::{Flags, SegmentData};
+use xmas_elf::ElfFile;
 
 trait ElfExt {
     fn new_manager(&self) -> Manager;
@@ -24,7 +24,13 @@ impl ElfExt for ElfFile<'_> {
                 _ => unreachable!(),
             };
 
-            manager.push(vaddr, vaddr + size, area.flags().to_attr(), ByFrame::new(), Some((data.as_ptr() as usize, data.len())));
+            manager.push(
+                vaddr,
+                vaddr + size,
+                area.flags().to_attr(),
+                ByFrame::new(),
+                Some((data.as_ptr() as usize, data.len())),
+            );
         }
         manager
     }
@@ -37,6 +43,10 @@ trait ToMemoryAttr {
 impl ToMemoryAttr for Flags {
     fn to_attr(&self) -> MemoryAttr {
         let flags = MemoryAttr::new().set_user();
-        if self.is_execute() { flags.set_executable() } else { flags }
+        if self.is_execute() {
+            flags.set_executable()
+        } else {
+            flags
+        }
     }
 }
