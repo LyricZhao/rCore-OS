@@ -37,7 +37,7 @@ fn trap_handler(frame: &mut TrapFrame) {
 
 fn breakpoint_handler(sepc: &mut usize) {
     println!("breakpoint at 0x{:x}", sepc);
-    *sepc += 2; // continue program
+    *sepc += 2; // continue bin
 }
 
 fn page_fault(frame: &mut TrapFrame) {

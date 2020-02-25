@@ -10,3 +10,8 @@ edition = "2018"
 riscv = {git = "https://github.com/rcore-os/riscv", features = ["inline-asm"] }
 spin = "*"
 buddy_system_allocator = "*"
+
+[workspace]
+members = [
+    "usr/template"
+]

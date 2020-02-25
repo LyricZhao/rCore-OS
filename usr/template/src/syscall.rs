@@ -4,7 +4,7 @@ enum Syscall {
 }
 
 #[inline(always)]
-fn syscall(id: Syscall, arg0: usize, arg1: usize, arg2: usize, arg3: usize) -> i64 {
+fn sys_call(id: Syscall, arg0: usize, arg1: usize, arg2: usize, arg3: usize) -> i64 {
     let id = id as usize;
     let mut ret: i64;
     unsafe {

@@ -137,6 +137,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "template"
+version = "0.1.0"
+dependencies = [
+ "buddy_system_allocator",
+]
+
+[[package]]
 name = "unicode-xid"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

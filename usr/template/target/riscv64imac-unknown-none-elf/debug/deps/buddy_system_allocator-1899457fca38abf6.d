@@ -1,0 +1,9 @@
+/Users/lyricz/Desktop/Spring/Operating Systems/Lab/os/usr/template/target/riscv64imac-unknown-none-elf/debug/deps/buddy_system_allocator-1899457fca38abf6.rmeta: /Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/lib.rs /Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/frame.rs /Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/linked_list.rs
+
+/Users/lyricz/Desktop/Spring/Operating Systems/Lab/os/usr/template/target/riscv64imac-unknown-none-elf/debug/deps/libbuddy_system_allocator-1899457fca38abf6.rlib: /Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/lib.rs /Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/frame.rs /Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/linked_list.rs
+
+/Users/lyricz/Desktop/Spring/Operating Systems/Lab/os/usr/template/target/riscv64imac-unknown-none-elf/debug/deps/buddy_system_allocator-1899457fca38abf6.d: /Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/lib.rs /Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/frame.rs /Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/linked_list.rs
+
+/Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/lib.rs:
+/Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/frame.rs:
+/Users/lyricz/.cargo/registry/src/mirrors.ustc.edu.cn-61ef6e0cd06fb9b8/buddy_system_allocator-0.3.6/src/linked_list.rs:
