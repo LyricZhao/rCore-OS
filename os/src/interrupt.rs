@@ -23,6 +23,7 @@ pub fn initialize() {
 
         sie::set_sext();
 
+        // Disabled by OpenSBI, open external interrupt and serial manually
         init_external_interrupt();
         enable_serial_interrupt();
     }
@@ -60,8 +61,8 @@ fn external_handler() {
     access_serial();
 }
 
-fn access_serial() -> bool {
-    match super::io::getchar_option() {
+fn access_serial() {
+    match super::io::getchar() {
         Some(ch) => {
             crate::fs::stdio::STDIN.push({
                 if ch == '\r' {
@@ -70,9 +71,8 @@ fn access_serial() -> bool {
                     ch
                 }
             });
-            true
         }
-        None => false,
+        None => {}
     }
 }
 

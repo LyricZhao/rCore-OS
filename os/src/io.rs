@@ -24,16 +24,7 @@ pub fn puts(s: &str) {
     }
 }
 
-#[allow(dead_code)]
-pub fn getchar() -> char {
-    let ch = sbi::console_getchar() as u8;
-    match ch {
-        255 => '\0',
-        ch => ch as char,
-    }
-}
-
-pub fn getchar_option() -> Option<char> {
+pub fn getchar() -> Option<char> {
     let ch = sbi::console_getchar() as isize;
     match ch {
         -1 => None,

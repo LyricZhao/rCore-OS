@@ -37,6 +37,8 @@ pub fn initialize(begin: usize, end: usize) {
     }
 
     // Remapping of different areas in kernel code and generate a new page table
+    // The remapped in this function will be only used in kernel threads
+    // TODO: can the remap process be deleted in new user thread?
     kernel_remap();
     println!("[kernel] Memory initialized.");
 }

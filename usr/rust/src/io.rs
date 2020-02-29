@@ -3,6 +3,9 @@ use core::fmt::{self, Write};
 
 struct StdOut;
 
+// stdin (fd = 0)
+// stdout (fd = 1)
+// stderr (fd = 2)
 pub const STDIN: usize = 0;
 
 impl fmt::Write for StdOut {

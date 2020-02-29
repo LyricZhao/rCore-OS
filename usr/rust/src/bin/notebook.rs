@@ -15,10 +15,12 @@ pub fn main() {
     loop {
         let ch = getchar();
         match ch {
+            // Left or right
             LF | CR => {
                 print!("{}", LF as char);
                 print!("{}", CR as char)
             }
+            // Normal cases
             _ => print!("{}", ch as char),
         }
     }

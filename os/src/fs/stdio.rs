@@ -18,9 +18,10 @@ impl Stdin {
 
     pub fn push(&self, ch: char) {
         self.buf.lock().push_back(ch);
-        self.pushed.notify();
+        self.pushed.notify(); // To wake up some threads
     }
 
+    // Get a char (or to say 'wait')
     pub fn pop(&self) -> char {
         loop {
             let ret = self.buf.lock().pop_front();

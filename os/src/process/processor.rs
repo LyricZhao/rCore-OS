@@ -103,6 +103,7 @@ impl Processor {
     pub fn sleep(&self) {
         let status = self.status();
         if !status.current.is_none() {
+            // Disable async interrupt and switch to idle (will enable again)
             let flags = disable_and_store();
             let tid = status.current.as_mut().unwrap().0;
             let info = status.pool.threads[tid].as_mut().unwrap();
@@ -113,6 +114,8 @@ impl Processor {
                 .unwrap()
                 .1
                 .switch_to(&mut *status.idle);
+
+            // Switch back and restore
             restore(flags);
         }
     }
@@ -137,6 +140,7 @@ impl Processor {
         // Exit and switch to idle
         status.pool.exit(id);
 
+        // Some thread is waiting
         if let Some(wait) = status.current.as_ref().unwrap().1.wait {
             status.pool.wake_up(wait);
         }
