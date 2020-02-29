@@ -1,4 +1,4 @@
-use crate::syscall::{sys_write, sys_read};
+use crate::syscall::{sys_read, sys_write};
 use core::fmt::{self, Write};
 
 struct StdOut;

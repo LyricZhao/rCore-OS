@@ -9,9 +9,9 @@ extern crate user;
 const LF: u8 = 0x0au8;
 const CR: u8 = 0x0du8;
 
+use alloc::string::String;
 use user::io::getchar;
 use user::syscall::sys_exec;
-use alloc::string::String;
 
 #[no_mangle]
 pub fn main() {
@@ -28,7 +28,7 @@ pub fn main() {
                     line.clear();
                 }
                 print!(">> ");
-            },
+            }
             _ => {
                 print!("{}", ch as char);
                 line.push(ch as char);
