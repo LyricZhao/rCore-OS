@@ -32,7 +32,8 @@ fn trap_handler(frame: &mut TrapFrame) {
         Trap::Exception(Exception::LoadPageFault) => page_fault(frame),
         Trap::Exception(Exception::StorePageFault) => page_fault(frame),
         Trap::Exception(Exception::UserEnvCall) => syscall(frame),
-        _ => panic!("undefined trap."),
+        Trap::Exception(Exception::IllegalInstruction) => panic!("Illegal instruction."), // For lab-1
+        _ => panic!("Undefined trap."),
     }
 }
 

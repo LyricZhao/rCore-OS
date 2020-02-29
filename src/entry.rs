@@ -25,6 +25,12 @@ pub extern "C" fn kernel_entry() -> ! {
     // Interrupt initialization
     crate::interrupt::initialize();
 
+    // For lab-1
+    unsafe {
+        asm!("mret"::::"volatile");
+    }
+
+    /*
     // Memory initialization (initialize using physical page range)
     crate::memory::initialize(
         (kernel_end_paddr / PAGE_SIZE) + 1,
@@ -39,6 +45,7 @@ pub extern "C" fn kernel_entry() -> ! {
 
     // Start threads
     crate::process::run();
+    */
 
     loop {}
 }
