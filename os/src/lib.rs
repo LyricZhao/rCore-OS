@@ -9,6 +9,7 @@ mod io;
 
 mod consts;
 mod entry;
+mod fs;
 mod interrupt;
 mod lang;
 mod memory;

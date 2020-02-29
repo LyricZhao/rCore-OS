@@ -22,13 +22,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf1de2fe8c75bc145a2f577add951f8134889b4795d47466a54a5c846d691693"
 
 [[package]]
+name = "bitvec"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cfadef5c4e2c2e64067b9ecc061179f12ac7ec65ba613b1f60f3972bbada1f5b"
+
+[[package]]
 name = "buddy_system_allocator"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2a9554af8305f02f66e447ff1838f12c0798b3924b059dd00e637017fa2f02a"
 dependencies = [
  "rustversion",
- "spin",
+ "spin 0.5.2",
 ]
 
 [[package]]
@@ -36,6 +42,15 @@ name = "cfg-if"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4785bdd1c96b2a846b2bd7cc02e86b6b3dbf14e7e53446c4f54c92a361040822"
+
+[[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+dependencies = [
+ "spin 0.5.2",
+]
 
 [[package]]
 name = "log"
@@ -51,8 +66,11 @@ name = "os"
 version = "0.1.0"
 dependencies = [
  "buddy_system_allocator",
+ "lazy_static",
+ "rcore-fs",
+ "rcore-fs-sfs",
  "riscv",
- "spin",
+ "spin 0.5.2",
  "xmas-elf",
 ]
 
@@ -72,6 +90,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "053a8c8bcc71fcce321828dc897a98ab9760bef03a4fc36693c231e5b3216cfe"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "rcore-fs"
+version = "0.1.0"
+source = "git+https://github.com/rcore-os/rcore-fs?rev=d8d61190#d8d611907b2845bce70adb8159d8130d0e3d8e30"
+dependencies = [
+ "spin 0.5.2",
+]
+
+[[package]]
+name = "rcore-fs-sfs"
+version = "0.1.0"
+source = "git+https://github.com/rcore-os/rcore-fs?rev=d8d61190#d8d611907b2845bce70adb8159d8130d0e3d8e30"
+dependencies = [
+ "bitvec",
+ "log",
+ "rcore-fs",
+ "spin 0.4.10",
+ "static_assertions",
 ]
 
 [[package]]
@@ -122,9 +160,21 @@ checksum = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
 
 [[package]]
 name = "spin"
+version = "0.4.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ceac490aa12c567115b40b7b7fceca03a6c9d53d5defea066123debc83c5dc1f"
+
+[[package]]
+name = "spin"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
+
+[[package]]
+name = "static_assertions"
+version = "0.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f3eb36b47e512f8f1c9e3d10c2c1965bc992bd9cdb024fa581e2194501c83d3"
 
 [[package]]
 name = "syn"

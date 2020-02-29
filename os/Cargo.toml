@@ -11,3 +11,9 @@ riscv = {git = "https://github.com/rcore-os/riscv", features = ["inline-asm"] }
 spin = "*"
 buddy_system_allocator = "*"
 xmas-elf = "*"
+rcore-fs = { git = "https://github.com/rcore-os/rcore-fs", rev = "d8d61190" }
+rcore-fs-sfs = { git = "https://github.com/rcore-os/rcore-fs", rev = "d8d61190" }
+
+[dependencies.lazy_static]
+version = "*"
+features = ["spin_no_std"]

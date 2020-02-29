@@ -3,6 +3,7 @@ use crate::process::processor::Processor;
 use crate::process::scheduler::RoundRobinScheduler;
 use crate::process::thread::Thread;
 use alloc::boxed::Box;
+use crate::fs::{ROOT_INODE, INodeExt};
 
 mod context;
 mod elf;
@@ -47,7 +48,6 @@ pub fn initialize() {
     PROCESSOR.initialize(idle, Box::new(pool));
 
     for i in 0..5 {
-        println!("Adding {}", i);
         PROCESSOR.add_thread({
             let thread = Thread::new_kernel(test_thread as usize);
             thread.append_args([i, 0, 0]);
@@ -55,17 +55,7 @@ pub fn initialize() {
         });
     }
 
-    extern "C" {
-        fn _user_img_start();
-        fn _user_img_end();
-    }
-
-    let data = unsafe {
-        core::slice::from_raw_parts(
-            _user_img_start as *const u8,
-            _user_img_end as usize - _user_img_start as usize,
-        )
-    };
-    let user_thread = Thread::new_user(data);
-    PROCESSOR.add_thread(user_thread);
+    let data = ROOT_INODE.lookup("rust/hello").unwrap().read_as_vec().unwrap();
+    let thread = Thread::new_user(data.as_slice());
+    PROCESSOR.add_thread(thread);
 }

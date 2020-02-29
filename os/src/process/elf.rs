@@ -13,14 +13,12 @@ impl ElfExt for ElfFile<'_> {
     fn new_manager(&self) -> Manager {
         let mut manager = Manager::new();
         for area in self.program_iter() {
-            print!("{}", area);
             if area.get_type() != Ok(Type::Load) {
                 continue;
             }
 
             let vaddr = area.virtual_addr() as usize;
             let size = area.mem_size() as usize;
-            println!("Mapping vaddr = {:#x}", vaddr);
 
             // Note the raw data need to be handled by the library
             // We have to copy the data from the address library provided
