@@ -14,7 +14,7 @@ export USER_IMG = $(usr)
 default: build
 
 usr:
-	cd ../usr/rust && cargo build && cd ../..
+	cd ../usr && make && cd ..
 
 $(usr): usr
 
@@ -30,7 +30,7 @@ asm:
 	$(objdump) -d $(kernel) | less
 
 clean:
-	cargo clean && cd ../usr/rust && cargo clean && cd ../../os
+	cargo clean && cd ../usr && make clean && cd ..
 
 qemu: build
 	qemu-system-riscv64 \

@@ -34,7 +34,6 @@ impl ElfExt for ElfFile<'_> {
                 ByFrame::new(),
                 Some((data.as_ptr() as usize, data.len())),
             );
-            println!("Finish");
         }
         manager
     }

@@ -31,5 +31,5 @@ pub fn sys_exit(code: usize) -> ! {
 }
 
 pub fn sys_read(fd: usize, base: *const u8, len: usize) -> i64 {
-    sys_call(SyscallId::Read, fd, base as usize, len, 0)
+    sys_call(Syscall::Read, fd, base as usize, len, 0)
 }

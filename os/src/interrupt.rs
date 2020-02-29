@@ -1,11 +1,9 @@
-use riscv::register::{
-    scause::{Exception, Interrupt, Trap},
-    sscratch, sstatus, stvec,
-};
+use riscv::register::{scause::{Exception, Interrupt, Trap}, sscratch, sstatus, stvec, sie};
 
 use crate::process::tick;
 use crate::timer::set_next_event;
 use crate::trap::frame::TrapFrame;
+use crate::memory::paddr_to_vaddr;
 
 global_asm!(include_str!("trap/trap.asm"));
 
@@ -19,8 +17,25 @@ pub fn initialize() {
         // Direct mode: jump to ebase directly when trapped
         stvec::write(__trap_entry as usize, stvec::TrapMode::Direct);
         sstatus::set_sie();
+
+        sie::set_sext();
+
+        init_external_interrupt();
+        enable_serial_interrupt();
     }
     println!("Interrupt initialized.");
+}
+
+pub unsafe fn init_external_interrupt() {
+    const SERIAL: u32 = 0xa;
+    let hart0_s_mode_interrupt_enables: *mut u32 = paddr_to_vaddr(0x0c00_2080) as *mut u32;
+    hart0_s_mode_interrupt_enables.write_volatile(1 << SERIAL);
+}
+
+pub unsafe fn enable_serial_interrupt() {
+    let uart16550: *mut u8 = paddr_to_vaddr(0x10000000) as *mut u8;
+    uart16550.add(4).write_volatile(0x0B);
+    uart16550.add(1).write_volatile(0x01);
 }
 
 #[no_mangle]
@@ -32,8 +47,29 @@ fn trap_handler(frame: &mut TrapFrame) {
         Trap::Exception(Exception::LoadPageFault) => page_fault(frame),
         Trap::Exception(Exception::StorePageFault) => page_fault(frame),
         Trap::Exception(Exception::UserEnvCall) => syscall(frame),
+        Trap::Interrupt(Interrupt::SupervisorExternal) => external_handler(),
         Trap::Exception(Exception::IllegalInstruction) => panic!("Illegal instruction."), // For lab-1
         _ => panic!("Undefined trap."),
+    }
+}
+
+fn external_handler() {
+    access_serial();
+}
+
+fn access_serial() -> bool {
+    match super::io::getchar_option() {
+        Some(ch) => {
+            crate::fs::stdio::STDIN.push({
+                if ch == '\r' {
+                    '\n'
+                } else {
+                    ch
+                }
+            });
+            true
+        },
+        None => false
     }
 }
 

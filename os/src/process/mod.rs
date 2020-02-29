@@ -44,8 +44,8 @@ pub fn sleep() {
     PROCESSOR.sleep();
 }
 
-pub fn wake_up() {
-    PROCESSOR.wake_up();
+pub fn wake_up(id: usize) {
+    PROCESSOR.wake_up(id);
 }
 
 pub fn current_tid() -> usize {
@@ -59,6 +59,8 @@ pub fn initialize() {
     idle.append_args([&PROCESSOR as *const Processor as usize, 0, 0]);
     PROCESSOR.initialize(idle, Box::new(pool));
 
+    /*
+    // Kernel thread test
     for i in 0..5 {
         PROCESSOR.add_thread({
             let thread = Thread::new_kernel(test_thread as usize);
@@ -66,8 +68,9 @@ pub fn initialize() {
             thread
         });
     }
+    */
 
-    let data = ROOT_INODE.lookup("rust/hello").unwrap().read_as_vec().unwrap();
+    let data = ROOT_INODE.lookup("rust/notebook").unwrap().read_as_vec().unwrap();
     let thread = Thread::new_user(data.as_slice());
     PROCESSOR.add_thread(thread);
 }

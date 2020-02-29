@@ -37,9 +37,7 @@ impl Thread {
         let elf = ElfFile::new(data).unwrap();
 
         match elf.header.pt2.type_().as_type() {
-            header::Type::Executable => {
-                println!("Executable program.");
-            }
+            header::Type::Executable => { }
             header::Type::SharedObject => {
                 panic!("Shared object is not supported.");
             }
