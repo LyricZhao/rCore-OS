@@ -23,9 +23,13 @@ checksum = "cf1de2fe8c75bc145a2f577add951f8134889b4795d47466a54a5c846d691693"
 
 [[package]]
 name = "bitvec"
-version = "0.9.0"
+version = "0.17.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cfadef5c4e2c2e64067b9ecc061179f12ac7ec65ba613b1f60f3972bbada1f5b"
+checksum = "1fe4300c1d7a9ea6f3e3f39c10b39862bb79e1175c0572b6b49539a30e5562f5"
+dependencies = [
+ "either",
+ "radium",
+]
 
 [[package]]
 name = "buddy_system_allocator"
@@ -34,7 +38,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2a9554af8305f02f66e447ff1838f12c0798b3924b059dd00e637017fa2f02a"
 dependencies = [
  "rustversion",
- "spin 0.5.2",
+ "spin",
 ]
 
 [[package]]
@@ -44,12 +48,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4785bdd1c96b2a846b2bd7cc02e86b6b3dbf14e7e53446c4f54c92a361040822"
 
 [[package]]
+name = "either"
+version = "1.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bb1f6b1ce1c140482ea30ddd3335fc0024ac7ee112895426e0a629a6c20adfe3"
+
+[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 dependencies = [
- "spin 0.5.2",
+ "spin",
 ]
 
 [[package]]
@@ -70,7 +80,7 @@ dependencies = [
  "rcore-fs",
  "rcore-fs-sfs",
  "riscv",
- "spin 0.5.2",
+ "spin",
  "xmas-elf",
 ]
 
@@ -93,22 +103,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "radium"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "def50a86306165861203e7f84ecffbbdfdea79f0e51039b33de1e952358c47ac"
+
+[[package]]
 name = "rcore-fs"
 version = "0.1.0"
-source = "git+https://github.com/rcore-os/rcore-fs?rev=d8d61190#d8d611907b2845bce70adb8159d8130d0e3d8e30"
+source = "git+https://github.com/rcore-os/rcore-fs#00096ec23e2ac0454676ddef6dbefe2230ccf09d"
 dependencies = [
- "spin 0.5.2",
+ "spin",
 ]
 
 [[package]]
 name = "rcore-fs-sfs"
 version = "0.1.0"
-source = "git+https://github.com/rcore-os/rcore-fs?rev=d8d61190#d8d611907b2845bce70adb8159d8130d0e3d8e30"
+source = "git+https://github.com/rcore-os/rcore-fs#00096ec23e2ac0454676ddef6dbefe2230ccf09d"
 dependencies = [
  "bitvec",
  "log",
  "rcore-fs",
- "spin 0.4.10",
+ "spin",
  "static_assertions",
 ]
 
@@ -157,12 +173,6 @@ name = "semver-parser"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
-
-[[package]]
-name = "spin"
-version = "0.4.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ceac490aa12c567115b40b7b7fceca03a6c9d53d5defea066123debc83c5dc1f"
 
 [[package]]
 name = "spin"

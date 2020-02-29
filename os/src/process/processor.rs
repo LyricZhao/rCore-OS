@@ -107,7 +107,12 @@ impl Processor {
             let tid = status.current.as_mut().unwrap().0;
             let info = status.pool.threads[tid].as_mut().unwrap();
             info.status = ThreadStatus::Sleeping;
-            status.current.as_mut().unwrap().1.switch_to(&mut *status.idle);
+            status
+                .current
+                .as_mut()
+                .unwrap()
+                .1
+                .switch_to(&mut *status.idle);
             restore(flags);
         }
     }

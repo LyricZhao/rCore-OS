@@ -15,8 +15,8 @@ mod lang;
 mod memory;
 mod process;
 mod sbi;
-mod syscall;
 mod sync;
+mod syscall;
 mod timer;
 mod trap;
 

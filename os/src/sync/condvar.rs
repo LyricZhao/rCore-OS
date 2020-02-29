@@ -1,6 +1,6 @@
-use spin::Mutex;
+use crate::process::{current_tid, sleep, wake_up, ThreadID};
 use alloc::collections::VecDeque;
-use crate::process::{ThreadID, current_tid, sleep, wake_up};
+use spin::Mutex;
 
 #[derive(Default)]
 pub struct Condvar {

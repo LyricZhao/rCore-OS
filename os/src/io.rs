@@ -29,7 +29,7 @@ pub fn getchar() -> char {
     let ch = sbi::console_getchar() as u8;
     match ch {
         255 => '\0',
-        ch => ch as char
+        ch => ch as char,
     }
 }
 
@@ -37,7 +37,7 @@ pub fn getchar_option() -> Option<char> {
     let ch = sbi::console_getchar() as isize;
     match ch {
         -1 => None,
-        ch => Some(ch as u8 as char)
+        ch => Some(ch as u8 as char),
     }
 }
 

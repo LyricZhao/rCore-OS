@@ -1,9 +1,9 @@
+use crate::fs::{INodeExt, ROOT_INODE};
 use crate::process::pool::ThreadPool;
 use crate::process::processor::Processor;
 use crate::process::scheduler::RoundRobinScheduler;
 use crate::process::thread::Thread;
 use alloc::boxed::Box;
-use crate::fs::{ROOT_INODE, INodeExt};
 
 mod context;
 mod elf;
@@ -82,7 +82,7 @@ pub fn execute(path: &str, host: Option<ThreadID>) -> bool {
             let thread = Thread::new_user(data.as_slice(), host);
             PROCESSOR.add_thread(thread);
             true
-        },
+        }
         Err(_) => {
             println!("Program not found.");
             false

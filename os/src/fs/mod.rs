@@ -1,11 +1,13 @@
+use alloc::{sync::Arc, vec::Vec};
 use lazy_static::*;
 use rcore_fs::vfs::*;
 use rcore_fs_sfs::SimpleFileSystem;
-use alloc::{ sync::Arc, vec::Vec };
 
 pub mod device;
 pub mod stdio;
 
+// What is a 'lazy_static'?
+// Initialize when used (runtime) but not at compile
 lazy_static! {
     pub static ref ROOT_INODE: Arc<dyn INode> = {
         let device = {
@@ -23,6 +25,7 @@ lazy_static! {
 }
 
 pub trait INodeExt {
+    // Read inode into a vec
     fn read_as_vec(&self) -> Result<Vec<u8>>;
 }
 
@@ -36,16 +39,4 @@ impl INodeExt for dyn INode {
         self.read_at(0, buf.as_mut_slice())?;
         Ok(buf)
     }
-}
-
-pub fn initialize() {
-    /*
-    println!("Available programs in rust/ are:");
-    let mut id = 0;
-    let dir = ROOT_INODE.lookup("rust").unwrap();
-    while let Ok(name) = dir.get_entry(id) {
-        id += 1;
-        println!("  {}", name);
-    }
-    */
 }

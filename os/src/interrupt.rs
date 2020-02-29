@@ -1,9 +1,12 @@
-use riscv::register::{scause::{Exception, Interrupt, Trap}, sscratch, sstatus, stvec, sie};
+use riscv::register::{
+    scause::{Exception, Interrupt, Trap},
+    sie, sscratch, sstatus, stvec,
+};
 
+use crate::memory::paddr_to_vaddr;
 use crate::process::tick;
 use crate::timer::set_next_event;
 use crate::trap::frame::TrapFrame;
-use crate::memory::paddr_to_vaddr;
 
 global_asm!(include_str!("trap/trap.asm"));
 
@@ -68,8 +71,8 @@ fn access_serial() -> bool {
                 }
             });
             true
-        },
-        None => false
+        }
+        None => false,
     }
 }
 

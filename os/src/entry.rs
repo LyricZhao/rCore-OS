@@ -23,9 +23,6 @@ pub extern "C" fn kernel_entry() -> ! {
     // Interrupt initialization
     crate::interrupt::initialize();
 
-    // File system initialization
-    crate::fs::initialize();
-
     // Thread initialization
     crate::process::initialize();
 

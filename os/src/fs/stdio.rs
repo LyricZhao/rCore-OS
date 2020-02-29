@@ -1,7 +1,7 @@
-use lazy_static::*;
-use alloc::{collections::VecDeque, sync::Arc};
-use spin::Mutex;
 use crate::sync::condvar::Condvar;
+use alloc::{collections::VecDeque, sync::Arc};
+use lazy_static::*;
+use spin::Mutex;
 
 pub struct Stdin {
     buf: Mutex<VecDeque<char>>,
@@ -27,7 +27,7 @@ impl Stdin {
             match ret {
                 Some(ch) => {
                     return ch;
-                },
+                }
                 None => {
                     self.pushed.wait();
                 }

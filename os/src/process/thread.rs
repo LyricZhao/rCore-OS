@@ -29,7 +29,8 @@ impl Thread {
             let stack = KernelStack::new();
             Box::new(Thread {
                 context: Context::new_kernel(entry, stack.top(), satp::read().bits()),
-                stack, wait: None
+                stack,
+                wait: None,
             })
         }
     }
@@ -38,7 +39,7 @@ impl Thread {
         let elf = ElfFile::new(data).unwrap();
 
         match elf.header.pt2.type_().as_type() {
-            header::Type::Executable => { }
+            header::Type::Executable => {}
             header::Type::SharedObject => {
                 panic!("Shared object is not supported.");
             }
@@ -70,7 +71,7 @@ impl Thread {
                 Context::new_user(entry, user_stack, kernel_stack.top(), manager.token())
             },
             stack: kernel_stack,
-            wait: wait_thread
+            wait: wait_thread,
         })
     }
 
@@ -78,7 +79,7 @@ impl Thread {
         Box::new(Thread {
             context: Context::null(),
             stack: KernelStack::new_empty(),
-            wait: None
+            wait: None,
         })
     }
 

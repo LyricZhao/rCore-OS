@@ -7,8 +7,8 @@ use crate::memory::manager::handler::Linear;
 use crate::memory::manager::Manager;
 use buddy_system_allocator::LockedHeap;
 use riscv::addr::Frame;
-use spin::Mutex;
 use riscv::register::sstatus;
+use spin::Mutex;
 
 mod frame_allocator;
 pub mod manager;
@@ -26,7 +26,9 @@ static DYNAMIC_ALLOCATOR: LockedHeap = LockedHeap::empty();
 static mut HEAP: [u8; KERNEL_HEAP_SIZE] = [0; KERNEL_HEAP_SIZE];
 
 pub fn initialize(begin: usize, end: usize) {
-    unsafe { sstatus::set_sum(); }
+    unsafe {
+        sstatus::set_sum();
+    }
     FRAME_ALLOCATOR.lock().initialize(begin, end);
     unsafe {
         DYNAMIC_ALLOCATOR
@@ -57,14 +59,14 @@ pub fn kernel_remap() {
         paddr_to_vaddr(0x0c00_3000),
         MemoryAttr::new(),
         Linear::new(PHYSICAL_MEMORY_OFFSET),
-        None
+        None,
     );
     manager.push(
         paddr_to_vaddr(0x1000_0000),
         paddr_to_vaddr(0x1000_1000),
         MemoryAttr::new(),
         Linear::new(PHYSICAL_MEMORY_OFFSET),
-        None
+        None,
     );
     unsafe {
         manager.activate();

@@ -1,12 +1,17 @@
-use spin::RwLock;
 use core::slice::from_raw_parts_mut;
 use rcore_fs::dev::*;
+use spin::RwLock;
 
+// Use a read-write lock
+// Threads can read at a same time, but only one can write
 pub struct MemDisk(RwLock<&'static mut [u8]>);
 
 impl MemDisk {
     pub unsafe fn new(begin: usize, end: usize) -> Self {
-        MemDisk(RwLock::new(from_raw_parts_mut(begin as *mut u8, end - begin)))
+        MemDisk(RwLock::new(from_raw_parts_mut(
+            begin as *mut u8,
+            end - begin,
+        )))
     }
 }
 
