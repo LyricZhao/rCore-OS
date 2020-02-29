@@ -1,6 +1,7 @@
 enum Syscall {
     Write = 64,
     Exit = 93,
+    Read = 63,
 }
 
 #[inline(always)]
@@ -27,4 +28,8 @@ pub fn sys_write(ch: u8) -> i64 {
 pub fn sys_exit(code: usize) -> ! {
     sys_call(Syscall::Exit, code, 0, 0, 0);
     loop {}
+}
+
+pub fn sys_read(fd: usize, base: *const u8, len: usize) -> i64 {
+    sys_call(SyscallId::Read, fd, base as usize, len, 0)
 }

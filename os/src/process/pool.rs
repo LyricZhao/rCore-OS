@@ -5,7 +5,7 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 
 pub struct ThreadPool {
-    threads: Vec<Option<ThreadInfo>>,
+    pub threads: Vec<Option<ThreadInfo>>,
     scheduler: Box<dyn Scheduler>,
 }
 
@@ -70,6 +70,12 @@ impl ThreadPool {
     // Check whether we need a switch when ticked
     pub fn tick(&mut self) -> bool {
         self.scheduler.tick()
+    }
+
+    pub fn wake_up(&mut self, id: ThreadID) {
+        let thread = self.threads[id].as_mut().unwrap();
+        thread.status = ThreadStatus::Ready;
+        self.scheduler.push(id);
     }
 
     pub fn exit(&mut self, id: ThreadID) {

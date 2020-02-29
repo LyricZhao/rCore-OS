@@ -16,6 +16,7 @@ mod memory;
 mod process;
 mod sbi;
 mod syscall;
+mod sync;
 mod timer;
 mod trap;
 

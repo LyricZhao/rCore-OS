@@ -4,7 +4,7 @@
 extern crate alloc;
 
 #[macro_use]
-extern crate template;
+extern crate user;
 
 #[no_mangle]
 pub fn main() -> usize {

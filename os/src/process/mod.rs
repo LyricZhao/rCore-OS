@@ -40,6 +40,18 @@ pub fn tick() {
     PROCESSOR.tick();
 }
 
+pub fn sleep() {
+    PROCESSOR.sleep();
+}
+
+pub fn wake_up() {
+    PROCESSOR.wake_up();
+}
+
+pub fn current_tid() -> usize {
+    PROCESSOR.current_tid()
+}
+
 pub fn initialize() {
     let scheduler = RoundRobinScheduler::new(2);
     let pool = ThreadPool::new(128, Box::new(scheduler));

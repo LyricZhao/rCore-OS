@@ -1,6 +1,6 @@
 use crate::interrupt::{disable_and_store, enable_and_wfi, restore};
 use crate::process::pool::ThreadPool;
-use crate::process::thread::Thread;
+use crate::process::thread::{Thread, ThreadStatus};
 use crate::process::{ExitCode, ThreadID};
 use alloc::boxed::Box;
 use core::cell::UnsafeCell;
@@ -98,6 +98,29 @@ impl Processor {
                 restore(flags);
             }
         } // Else for continuing idle thread (back to idle from interrupt)
+    }
+
+    pub fn sleep(&self) {
+        let status = self.status();
+        if !status.current.is_none() {
+            unsafe {
+                let flags = disable_and_store();
+                let tid = status.current.as_mut().unwrap().0;
+                let info = status.pool.threads[tid].as_mut().unwrap();
+                info.status = ThreadStatus::Sleeping;
+                status.current.as_mut().unwrap().1.switch_to(&mut *status.idle);
+                restore(flags);
+            }
+        }
+    }
+
+    pub fn wake_up(&self, id: ThreadID) {
+        let status = self.status();
+        status.pool.wake_up(id);
+    }
+
+    pub fn current_tid(&self) -> usize {
+        self.status().current.as_mut().unwrap().0 as usize
     }
 
     pub fn exit(&self, _code: ExitCode) -> ! {

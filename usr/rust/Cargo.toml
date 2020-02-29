@@ -1,5 +1,5 @@
 [package]
-name = "template"
+name = "user"
 version = "0.1.0"
 authors = ["LyricZhao <lyricz@yeah.net>"]
 edition = "2018"
