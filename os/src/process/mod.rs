@@ -59,6 +59,9 @@ pub fn initialize() {
     idle.append_args([&PROCESSOR as *const Processor as usize, 0, 0]);
     PROCESSOR.initialize(idle, Box::new(pool));
 
+    // User shell
+    execute("rust/shell", None);
+
     /*
     // Kernel thread test
     for i in 0..5 {
@@ -69,8 +72,20 @@ pub fn initialize() {
         });
     }
     */
+}
 
-    let data = ROOT_INODE.lookup("rust/notebook").unwrap().read_as_vec().unwrap();
-    let thread = Thread::new_user(data.as_slice());
-    PROCESSOR.add_thread(thread);
+pub fn execute(path: &str, host: Option<ThreadID>) -> bool {
+    let found = ROOT_INODE.lookup(path);
+    match found {
+        Ok(inode) => {
+            let data = inode.read_as_vec().unwrap();
+            let thread = Thread::new_user(data.as_slice(), host);
+            PROCESSOR.add_thread(thread);
+            true
+        },
+        Err(_) => {
+            println!("Program not found.");
+            false
+        }
+    }
 }

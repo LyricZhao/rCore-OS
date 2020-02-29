@@ -12,7 +12,7 @@ pub fn initialize() {
     }
 
     set_next_event();
-    println!("Timer initialized.");
+    println!("[kernel] Timer initialized.");
 }
 
 pub fn set_next_event() {

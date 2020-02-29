@@ -23,7 +23,7 @@ pub fn initialize() {
         init_external_interrupt();
         enable_serial_interrupt();
     }
-    println!("Interrupt initialized.");
+    println!("[kernel] Interrupt initialized.");
 }
 
 pub unsafe fn init_external_interrupt() {

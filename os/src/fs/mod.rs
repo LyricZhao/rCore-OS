@@ -39,6 +39,7 @@ impl INodeExt for dyn INode {
 }
 
 pub fn initialize() {
+    /*
     println!("Available programs in rust/ are:");
     let mut id = 0;
     let dir = ROOT_INODE.lookup("rust").unwrap();
@@ -46,4 +47,5 @@ pub fn initialize() {
         id += 1;
         println!("  {}", name);
     }
+    */
 }

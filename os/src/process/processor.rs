@@ -132,6 +132,10 @@ impl Processor {
         // Exit and switch to idle
         status.pool.exit(id);
 
+        if let Some(wait) = status.current.as_ref().unwrap().1.wait {
+            status.pool.wake_up(wait);
+        }
+
         status
             .current
             .as_mut()

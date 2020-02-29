@@ -2,6 +2,7 @@ enum Syscall {
     Write = 64,
     Exit = 93,
     Read = 63,
+    Exec = 221,
 }
 
 #[inline(always)]
@@ -32,4 +33,8 @@ pub fn sys_exit(code: usize) -> ! {
 
 pub fn sys_read(fd: usize, base: *const u8, len: usize) -> i64 {
     sys_call(Syscall::Read, fd, base as usize, len, 0)
+}
+
+pub fn sys_exec(path: *const u8) {
+    sys_call(Syscall::Exec, path as usize, 0, 0, 0);
 }

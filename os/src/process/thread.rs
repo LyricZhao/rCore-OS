@@ -12,6 +12,7 @@ use xmas_elf::{header, ElfFile};
 pub struct Thread {
     pub context: Context,
     pub stack: KernelStack,
+    pub wait: Option<ThreadID>,
 }
 
 impl Thread {
@@ -28,12 +29,12 @@ impl Thread {
             let stack = KernelStack::new();
             Box::new(Thread {
                 context: Context::new_kernel(entry, stack.top(), satp::read().bits()),
-                stack,
+                stack, wait: None
             })
         }
     }
 
-    pub fn new_user(data: &[u8]) -> Box<Thread> {
+    pub fn new_user(data: &[u8], wait_thread: Option<ThreadID>) -> Box<Thread> {
         let elf = ElfFile::new(data).unwrap();
 
         match elf.header.pt2.type_().as_type() {
@@ -69,6 +70,7 @@ impl Thread {
                 Context::new_user(entry, user_stack, kernel_stack.top(), manager.token())
             },
             stack: kernel_stack,
+            wait: wait_thread
         })
     }
 
@@ -76,6 +78,7 @@ impl Thread {
         Box::new(Thread {
             context: Context::null(),
             stack: KernelStack::new_empty(),
+            wait: None
         })
     }
 

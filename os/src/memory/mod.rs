@@ -36,7 +36,7 @@ pub fn initialize(begin: usize, end: usize) {
 
     // Remapping of different areas in kernel code and generate a new page table
     kernel_remap();
-    println!("Memory initialized.");
+    println!("[kernel] Memory initialized.");
 }
 
 pub fn kernel_remap() {

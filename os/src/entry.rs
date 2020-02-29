@@ -10,7 +10,7 @@ pub extern "C" fn kernel_entry() -> ! {
     extern "C" {
         fn end();
     }
-    println!("rCore-OS Kernel");
+    println!("[kernel] rCore-OS Kernel");
 
     let kernel_end_paddr = end as usize - KERNEL_BEGIN_VADDR + KERNEL_BEGIN_PADDR;
 
