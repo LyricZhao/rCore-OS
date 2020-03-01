@@ -23,12 +23,6 @@ pub extern "C" fn kernel_entry() -> ! {
     // Interrupt initialization
     crate::interrupt::initialize();
 
-    // For lab-1
-    unsafe {
-        asm!("mret"::::"volatile");
-    }
-
-    /*
     // Thread initialization
     crate::process::initialize();
 
@@ -37,7 +31,6 @@ pub extern "C" fn kernel_entry() -> ! {
 
     // Start threads
     crate::process::run();
-    */
 
     loop {}
 }
